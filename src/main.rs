@@ -475,10 +475,11 @@ fn display_animessage(
                 if !url.is_empty() {
                     println!();
                     let prompt_msg = format!(
-                        r#"Open the following URL with your default browser ? {:?} (Press "y" and then "Enter" on your keyboard to accept, or leave blank to refuse.) "#,
+                        "Open the following URL with your default internet browser ?\n{:?}",
                         &url
                     );
                     let yes = Confirm::new(&prompt_msg)
+                        .with_help_message("Press \"y\" and then \"Enter\" on your keyboard to accept, or leave blank to refuse.")
                         .prompt();
                     if let Ok(true) = yes {
                         if !no_exec {

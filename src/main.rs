@@ -2,6 +2,7 @@ use std::{cell::RefCell, io::Read, mem::MaybeUninit, path};
 
 use anyhow::bail;
 use envmnt::{exists, get_list};
+use inquire::Confirm;
 use log::info;
 use term_table::{row::Row, Table};
 
@@ -473,17 +474,13 @@ fn display_animessage(
 
                 if !url.is_empty() {
                     println!();
-                    print!(
+                    let prompt_msg = format!(
                         r#"❔ Open the following URL with your default browser ? {:?} (Press "y" and then "Enter" on your keyboard to accept, or leave blank to refuse.) "#,
                         &url
                     );
-                    let user_input: String = input().get();
-                    let yes_no = user_input
-                        .chars()
-                        .nth(0)
-                        .unwrap_or('n')
-                        .to_ascii_lowercase();
-                    if yes_no == 'y' {
+                    let yes = Confirm::new(&prompt_msg)
+                        .prompt();
+                    if let Ok(true) = yes {
                         if !no_exec {
                             let webbrowser_result = webbrowser::open(&url);
                             if debug {
@@ -771,7 +768,7 @@ fn display_animessage(
             // NOTE, MARKER, REAL, FORMATTING EMPTY LINE
             _ if line_trimmed.starts_with(NOTE)
                 || line_trimmed.starts_with(MARKER)
-                || line_trimmed == "" =>
+                || line_trimmed.is_empty() =>
             {
                 ()
             }

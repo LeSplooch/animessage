@@ -479,7 +479,7 @@ fn display_animessage(
                         &url
                     );
                     let yes = Confirm::new(&prompt_msg)
-                        .with_help_message("Press \"y\" and then \"Enter\" on your keyboard to accept, or leave blank to refuse.")
+                        .with_help_message("Type \"y\" to accept or \"n\" to refuse, and then press \"Enter\".")
                         .prompt();
                     if let Ok(true) = yes {
                         if !no_exec {

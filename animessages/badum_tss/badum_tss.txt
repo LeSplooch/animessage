@@ -1,0 +1,19 @@
+🥁
+
+--[SEP]--
+
+🥁 BADUM
+
+--[WAIT_SHORT]--
+--[WAIT_SHORT]--
+--[AUDIO]-- badum_tss.mp3
+--[SEP]--
+
+🥁 BADUM TSS
+
+--[WAIT_SHORT]--
+--[SEP]--
+
+--[WAIT_LONG]--
+
+--[SEP]--

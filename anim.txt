@@ -1,0 +1,16 @@
+[2J[1;1H7[?25l]0;Animessage | Tutorial[8;60;190t*** Welcome to Animessage's Tutorial ! ***
+
+Hi ! I'm Animessage, a command line application to create animated texts (such as ASCII art for example) in the terminal.
+This tutorial will walk you through the creation of your first animessage in details. I recommend creating a folder named "tutorial" with 
+a file named "tutorial.txt" in that folder, and to launch your default terminal on the side so you can follow along.
+This tutorial is an animessage, with the only difference that it's embedded into Animessage instead of being written in a 
+separate text file.
+
+Press C to continue.
+
+
+    ╔═══════════════════════════════════════════════════════════════════════╗
+    ║   ----|| Animessage, an application by github.com/LeSplooch ||----    ║
+    ╚═══════════════════════════════════════════════════════════════════════╝
+    
+[?25h2021-04-11 05:01:56,597 WARN  [animessage] Animessage terminated by user. (Ctrl + C)

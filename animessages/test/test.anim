@@ -1,0 +1,78 @@
+xoo
+ooo
+ooo
+
+--[PRINT_LINE]-- "0"
+--[CLEAR]--
+--[WAIT]-- "0.1"
+
+oxo
+ooo
+ooo
+
+--[PRINT_LINE]-- "0"
+--[CLEAR]--
+--[WAIT]-- "0.1"
+
+oox
+ooo
+ooo
+
+--[PRINT_LINE]-- "0"
+--[CLEAR]--
+--[WAIT]-- "0.1"
+
+ooo
+oox
+ooo
+
+--[PRINT_LINE]-- "0"
+--[CLEAR]--
+--[WAIT]-- "0.1"
+
+ooo
+ooo
+oox
+
+--[PRINT_LINE]-- "0"
+--[CLEAR]--
+--[WAIT]-- "0.1"
+
+ooo
+ooo
+oxo
+
+--[PRINT_LINE]-- "0"
+--[CLEAR]--
+--[WAIT]-- "0.1"
+
+ooo
+ooo
+xoo
+
+--[PRINT_LINE]-- "0"
+--[CLEAR]--
+--[WAIT]-- "0.1"
+
+ooo
+xoo
+ooo
+
+--[PRINT_LINE]-- "0"
+--[CLEAR]--
+--[WAIT]-- "0.1"
+
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"
+--[GOTO]-- "1"

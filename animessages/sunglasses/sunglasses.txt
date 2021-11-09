@@ -1,0 +1,45 @@
+
+(•_•)
+
+
+--[SEP]--
+
+--[WAIT_SHORT]--
+--[WAIT_SHORT]--
+--[WAIT_SHORT]--
+
+( •_•)>⌐■-■
+
+--[SEP]--
+
+--[WAIT_SHORT]--
+
+(⌐■_■)
+
+--[SEP]--
+
+--[WAIT_LONG]--
+--[WAIT_SHORT]--
+--[WAIT_SHORT]--
+
+
+    *YEAAAAAAAA-*
+(⌐■_■)
+
+--[SEP]--
+--[NOTE]-- --[AUDIO]-- yeaaah.mp3
+
+--[INCLUDE]-- include1.txt
+--[SEP]--
+
+--[NOTE]-- --[GOTO]-- 20
+
+--[NOTE]-- --[WAIT_BIG]--
+--[SEP]--
+
+Press C to continue...
+--[SEP]--
+--[WAIT_FOR_INPUT]-- c
+
+Pressed C. Exiting...
+--[SEP]--

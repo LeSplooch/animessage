@@ -1,6 +1,6 @@
 [package]
 name = "animessage"
-version = "0.16.1"
+version = "0.16.2"
 authors = ["LeSplooch <34457355+LeSplooch@users.noreply.github.com>"]
 edition = "2018"
 

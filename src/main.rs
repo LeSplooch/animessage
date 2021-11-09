@@ -475,7 +475,7 @@ fn display_animessage(
                 if !url.is_empty() {
                     println!();
                     let prompt_msg = format!(
-                        "Open the following URL with your default internet browser ?\n{:?}",
+                        "Open the following URL with your default internet browser ? {:?}",
                         &url
                     );
                     let yes = Confirm::new(&prompt_msg)

@@ -475,8 +475,8 @@ fn display_animessage(
                 if !url.is_empty() {
                     println!();
                     let prompt_msg = format!(
-                        "Open the following URL with your default internet browser ? {:?}",
-                        &url
+                        "Open the following URL with your default internet browser ? {}",
+                        url
                     );
                     let yes = Confirm::new(&prompt_msg)
                         .with_help_message("Type \"y\" to accept or \"n\" to refuse, and then press \"Enter\".")

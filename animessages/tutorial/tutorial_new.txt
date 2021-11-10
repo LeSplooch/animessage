@@ -59,7 +59,7 @@ Press C to continue.
 --[EMPTY]--
 
 Animessage's language is composed of two major concepts : text and functions. You write your text as you would in a normal text file 
-and you put functions after some of your lines of text to interact with them.
+and you put functions around some of your lines of text to interact with them or use different functionalities.
 
 --[EMPTY]--
 Example 1A :
@@ -107,9 +107,9 @@ Hurray ! Your first animessage has been displayed in the terminal ! Congratulati
 
 You can also type -f instead of --file. Every command argument can be shortened in the same fashion. I will fully write 
 them so you have a clearer idea about their purpose.
-The file path you pass to the --file command argument is called a "value". You can see the list of arguments of Animessage 
-by typing :
-"/path/to/animessage --help" (or -h instead of --help)
+The file path you pass to the --file command argument is called a "value". You can see the full commands list by typing :
+"/path/to/animessage" --help
+(or -h instead of --help)
 --[EMPTY]--
 
 Remember to save your file after every modification to avoid losing code.

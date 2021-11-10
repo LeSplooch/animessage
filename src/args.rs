@@ -7,13 +7,13 @@ use std::time::Duration;
 
 type ArgsVec<'a> = SmallVec<[&'a str; 3]>;
 
-pub struct Args<'a> {
+pub(crate) struct Args<'a> {
     inner: ArgsVec<'a>,
 }
 
 impl<'a> Args<'a> {
     // TODO : create a nested enum in the not yet created 'animessage::Error' enum (in main.rs) for parsing errors and replace anyhow::Error with the corresponding variant
-    pub fn parse(
+    pub(crate) fn parse(
         string_to_parse: &'a str,
         args_number_expected: usize,
         debug: bool,
@@ -40,7 +40,7 @@ impl<'a> Args<'a> {
         Ok(Args { inner: args })
     }
 
-    // pub fn kwargs(&self, from_index: usize) -> ArgsResult<&[&'a str]> {
+    // pub(crate) fn kwargs(&self, from_index: usize) -> ArgsResult<&[&'a str]> {
     //     let max_index = self.inner.len() - 1;
     //     if from_index > max_index {
     //         return Err(ArgsError::MissingArgs { index: from_index, max_index })
@@ -48,7 +48,7 @@ impl<'a> Args<'a> {
     //     Ok(&self.inner[from_index..])
     // }
 
-    pub fn get(&self, index: usize) -> &str {
+    pub(crate) fn get(&self, index: usize) -> &str {
         // let inner_len = &self.inner.len();
         // if index > *inner_len {
         //     return Err(ArgsError::MissingArgs { index: index, max_index: *inner_len })
@@ -70,16 +70,16 @@ impl<'a> AsMut<ArgsVec<'a>> for Args<'a> {
 }
 
 #[derive(Error, Debug)]
-pub enum ArgsError {
+pub(crate) enum ArgsError {
     #[error("wrong number of arguments : received {received:?} arguments, but expected {expected:?} arguments.")]
     WrongArgsAmount { received: usize, expected: usize }, // (number of args received, number of args expected)
     #[error("check your function call for missing or misordered args. arg index {index:?} is out of bounds (max index : {max_index:?}). ")]
     MissingArgs { index: usize, max_index: usize },
 }
 
-pub type ArgsResult<T> = Result<T, ArgsError>;
+pub(crate) type ArgsResult<T> = Result<T, ArgsError>;
 
-pub fn duration_from_arg(duration: &str) -> (f32, Duration) {
+pub(crate) fn duration_from_arg(duration: &str) -> (f32, Duration) {
     let duration_f32 = duration
         .parse::<f32>()
         .unwrap_or_else(|_| {

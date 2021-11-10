@@ -1,11 +1,14 @@
 --[HIDE_CURSOR]--
+--[CLEAR]--
+--[MOVE_CURSOR]-- "0" "0"
 --[TITLE]-- "Animessage | Tutorial"
---[RESIZE]-- "151" "45"
---[WAIT]-- "0.01"
+--[NOTE]-- --[RESIZE]-- "151" "45"    ( disabled with --[NOTE]-- )
+--[NOTE]-- --[WAIT]-- "0.01"          ( disabled with --[NOTE]-- )
 
 *** Welcome to Animessage's Tutorial ! ***
 --[EMPTY]--
-
+*** Please maximize this window to see the tutorial clearly. ***
+--[EMPTY]--
 Hi ! I'm Animessage, a command line application to create animated texts (such as ASCII art for example) in the terminal.
 This tutorial will walk you through the creation of your first animessage in details. I recommend creating a folder named "tutorial" with 
 a file named "tutorial.txt" in that folder, and to launch your default terminal on the side so you can follow along.

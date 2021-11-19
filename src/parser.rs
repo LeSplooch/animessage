@@ -36,7 +36,7 @@ pub(crate) fn display_animessage(
     no_exec: bool,
     start_index: usize,
 ) -> AnyResult<()> {
-    let mut current_step = String::with_capacity(1024 * 5);
+    let mut current_step = String::with_capacity(1024 * 3);
     // let mut expected_steps_n: u64 = 0;
 
     let mut gotos_cache: BTreeMap<usize, u64> = BTreeMap::new(); // K: goto line / V: goto iters number

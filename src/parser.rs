@@ -645,7 +645,7 @@ pub(crate) fn display_animessage(
 
             // Anything else
             _ => {
-                let line = format!("{}{}", line, "\n");
+                let line = format!("{}\n", line);
                 current_step.push_str(&line);
             }
         }

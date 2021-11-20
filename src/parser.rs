@@ -51,23 +51,29 @@ pub(crate) fn display_animessage(
         .lines()
         .map(|s| s.to_string())
         .collect();
-
     let _orig_lines = lines.clone();
-    let mut line_index: usize = start_index;
 
-    if !debug {
+    let mut lines_number_bit_count = lines.len().to_string().chars().count();
+
+    if !debug { 
         // clear_terminal();
         // move_cursor(0, 0);
         save_cursor_position();
     }
 
+    let mut line_index: usize = start_index;
     'main_loop: while line_index + 1 <= lines.len() {
         let line = lines[line_index].clone();
         let line_trimmed = line.trim();
         let line_number = line_index + 1;
 
         if debug {
-            println!("{} | {}", line_number, line);
+            println!(
+                "{line_number:0fill$} | {line}", 
+                fill = lines_number_bit_count,
+                line_number = line_number, 
+                line = line
+            );
         }
 
         match line {

@@ -53,7 +53,7 @@ pub(crate) fn display_animessage(
         .collect();
     let _orig_lines = lines.clone();
 
-    let lines_number_bit_count = lines.len().to_string().chars().count();
+    let lines_number_count = lines.len().to_string().chars().count();
 
     if !debug { 
         // clear_terminal();
@@ -70,7 +70,7 @@ pub(crate) fn display_animessage(
         if debug {
             println!(
                 "{line_number:0fill$} | {line}", 
-                fill = lines_number_bit_count,
+                fill = lines_number_count,
                 line_number = line_number, 
                 line = line
             );

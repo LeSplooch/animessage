@@ -53,7 +53,7 @@ pub(crate) fn display_animessage(
         .collect();
     let _orig_lines = lines.clone();
 
-    let mut lines_number_bit_count = lines.len().to_string().chars().count();
+    let lines_number_bit_count = lines.len().to_string().chars().count();
 
     if !debug { 
         // clear_terminal();

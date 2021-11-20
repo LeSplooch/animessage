@@ -42,7 +42,7 @@ pub(crate) fn flush_stdout() {
 #[derive(Debug, StructOpt)]
 #[structopt(
     name = "Animessage",
-    about = "Create animated messages in the terminal."
+    about = "Create animated messages for the terminal."
 )]
 pub(crate) struct Opts {
     /// Path to the file you want to open.

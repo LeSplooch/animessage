@@ -21,7 +21,6 @@ use {
     /* lazy_static::lazy_static, */
     anyhow::Result as AnyResult,
     args::{duration_from_arg, Args},
-    asciify::AsciiBuilder,
     crossterm::{
         self, /* Command, */
         /* execute, ExecutableCommand,  */ cursor,

@@ -55,7 +55,7 @@ pub(crate) fn display_animessage(
 
     let lines_number_count = lines.len().to_string().chars().count();
 
-    if !debug { 
+    if !debug {
         // clear_terminal();
         // move_cursor(0, 0);
         save_cursor_position();
@@ -69,9 +69,9 @@ pub(crate) fn display_animessage(
 
         if debug {
             println!(
-                "{line_number:0fill$} | {line}", 
+                "{line_number:0fill$} | {line}",
                 fill = lines_number_count,
-                line_number = line_number, 
+                line_number = line_number,
                 line = line
             );
         }
@@ -426,36 +426,40 @@ pub(crate) fn display_animessage(
 
                 if !image_path.as_os_str().is_empty() {
                     check_relative_path_ok(&image_path, relative_paths_ok);
-
-                    let terminal_size = terminal::size().unwrap();
-                    let image = image::open(&image_path).unwrap_or_else(|img_error| {
-                        error!("Image Error : {:#?}", img_error);
-                        std::process::exit(0)
-                    });
-                    // let image_dimensions = image.dimensions();
-
                     if debug {
                         debug!(
                             "Converting image from path to ASCII : {:?} ...",
                             &image_path
                         );
-                        debug!(
-                            "Resizing ASCII to terminal size (columns * rows) : {} * {} ...",
-                            terminal_size.0, terminal_size.1
-                        );
                     }
                     if !no_exec {
-                        AsciiBuilder::new_from_image(image)
-                            .set_deep(true)
-                            .set_invert(false)
-                            .set_resize((terminal_size.0 as u32 - 1, terminal_size.1 as u32))
-                            .to_std_out(true);
+                        let (x, y) = match cursor::position() {
+                            Ok(pos) => pos,
+                            Err(err) => {
+                                error!("Can't obtain cursor position : {:?}", err);
+                                return Ok(());
+                            }
+                        };
 
-                        crossterm::execute!(
-                            stdout(),
-                            crossterm::style::SetAttribute(crossterm::style::Attribute::Reset)
-                        )
-                        .unwrap();
+                        let conf = viuer::Config {
+                            // set offset
+                            x,
+                            y: y as i16,
+                            // set dimensions
+                            width: None,
+                            height: None,
+                            ..Default::default()
+                        };
+                        if let Err(err) = viuer::print_from_file(image_path, &conf) {
+                            error!("Printing image failed : {:?}", err);
+                            return Ok(());
+                        }
+
+                        // crossterm::execute!(
+                        //     stdout(),
+                        //     crossterm::style::SetAttribute(crossterm::style::Attribute::Reset)
+                        // )
+                        // .unwrap();
                     }
                 } else {
                     error!("ARG ERROR : Please specify a path as 1st argument of --[ASCII_IMAGE]-- :\n--[ASCII_IMAGE]-- path/to/file.jpg");

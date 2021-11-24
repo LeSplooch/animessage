@@ -83,14 +83,13 @@ pub(crate) fn display_animessage(
                 let (print_interval_f32, print_interval) = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
-                    let current_step_trimmed = current_step;
 
                     if print_interval_f32 == 0.0 {
                         if debug {
                             debug!("Printing this step all at once.");
                         }
                         if !no_exec {
-                            print!("{}", current_step_trimmed);
+                            print!("{}", &current_step);
                             flush_stdout();
                         }
                     } else {
@@ -98,7 +97,7 @@ pub(crate) fn display_animessage(
                             debug!("Printing this step character by character with an interval of {:?}.", print_interval);
                         }
                         if !no_exec {
-                            for line_string in current_step_trimmed.lines() {
+                            for line_string in current_step.lines() {
                                 for c in line_string.chars() {
                                     print!("{}", c);
                                     flush_stdout();
@@ -121,14 +120,13 @@ pub(crate) fn display_animessage(
                 let (print_interval_f32, print_interval) = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
-                    let current_step_trimmed = current_step;
 
                     if print_interval_f32 == 0.0 {
                         if debug {
                             debug!("Printing this step all at once.");
                         }
                         if !no_exec {
-                            println!("{}", current_step_trimmed);
+                            println!("{}", &current_step);
                             flush_stdout();
                         }
                     } else {
@@ -136,7 +134,7 @@ pub(crate) fn display_animessage(
                             debug!("Printing this step character by character with an interval of {:?}.", print_interval);
                         }
                         if !no_exec {
-                            for line_string in current_step_trimmed.lines() {
+                            for line_string in current_step.lines() {
                                 for c in line_string.chars() {
                                     print!("{}", c);
                                     flush_stdout();

@@ -83,7 +83,7 @@ pub(crate) fn display_animessage(
                 let (print_interval_f32, print_interval) = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
-                    let current_step_trimmed = current_step.trim_end();
+                    let current_step_trimmed = current_step;
 
                     if print_interval_f32 == 0.0 {
                         if debug {
@@ -121,7 +121,7 @@ pub(crate) fn display_animessage(
                 let (print_interval_f32, print_interval) = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
-                    let current_step_trimmed = current_step.trim_end();
+                    let current_step_trimmed = current_step;
 
                     if print_interval_f32 == 0.0 {
                         if debug {

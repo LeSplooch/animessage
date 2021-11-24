@@ -1,6 +1,8 @@
 --[HIDE_CURSOR]--
 --[TITLE]-- "In an instant..."
 --[RESIZE]-- "151" "45"
+--[CLEAR]--
+--[MOVE_CURSOR]-- "0" "0"
             
 --[EMPTY]--
 --[EMPTY]--
@@ -10,16 +12,19 @@
 --[EMPTY]--
 --[EMPTY]--
 
+--[PRINT_LINE]-- "0.05"
+--[WAIT]-- "5"
+
 9:00 PM,
 --[PRINT]-- "0.05"
---[WAIT]-- "0.8"
+--[WAIT]-- "0.6"
 
  the night is slowly falling,
 --[PRINT]-- "0.05"
---[WAIT]-- "0.8"
+--[WAIT]-- "0.6"
 
- and my Melody passes by me as gorgeous as ever.
+ and my Melody walks by me, as gorgeous as ever.
 --[PRINT]-- "0.05"
---[WAIT]-- "0.8"
+--[WAIT]-- "0.6"
 
- Her long hair, 
+ 

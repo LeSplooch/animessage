@@ -118,7 +118,6 @@ fn process_markers(
     let anim_lines_iter = animessage_str.lines().enumerate();
     match mode {
         MarkerMode::Find => {
-            info!("Searching for markers...");
             for (index, l) in anim_lines_iter {
                 if l.starts_with(MARKER) {
                     let args = Args::parse(l, 1, debug)?;

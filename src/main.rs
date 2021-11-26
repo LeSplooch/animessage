@@ -134,6 +134,7 @@ fn process_markers(
                     }
                 }
             }
+            info!("No marker corresponding to {:?}.", marker);
         }
         MarkerMode::Summary => {
             println!("Markers summary :");

@@ -258,15 +258,15 @@ Here is the complete list of functions you can use in your code :
 --[EMPTY]--
 
 Notes :
-- Durations and delays are in seconds, and a floating point number can be entered.
-- Paths can either be full or relative, but if you encounter an error with a relative path, make sure you can use them by 
+> Durations and delays are in seconds, and a floating point number can be entered.
+> Paths can either be full or relative, but if you encounter an error with a relative path, make sure you can use them by 
 enabling the debug mode and then read the first one or two lines.
-- The only functions that are fully executed in the no-exec mode are --[GOTO]-- , --[REPLACE]-- , --[DEL_LINE]-- , 
+> The only functions that are fully executed in the no-exec mode are --[GOTO]-- , --[REPLACE]-- , --[DEL_LINE]-- , 
 --[ESCAPE]-- --[TITLE]-- , --[INCLUDE]-- , and --[EXIT]-- .
-- --[RESIZE]-- can prevent printing to work correctly on some terminals if you print right after resizing. To avoid this,
+> --[RESIZE]-- can prevent printing to work correctly on some terminals if you print right after resizing. To avoid this,
 insert a --[WAIT]-- function with a short delay, such as 0.100 seconds.
-- --[WAIT_FOR_INPUT]-- waits for a delay of 250ms before waiting for a key to be pressed to avoid triggering multiple --[WAIT_FOR_INPUT]-- 
-too quickly accidentally. It is still possible to hold the expected key down to chain multiple --[WAIT_FOR_INPUT]-- if you put the same key as a value
+> --[WAIT_FOR_INPUT]-- waits for a delay of 250ms before waiting for a key to be pressed to avoid triggering multiple --[WAIT_FOR_INPUT]-- 
+too quickly by accident. It is still possible to hold the expected key down to chain multiple --[WAIT_FOR_INPUT]-- if you set the same key as a value
 for multiple --[WAIT_FOR_INPUT]-- functions.
 
 --[EMPTY]--

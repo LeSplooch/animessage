@@ -305,7 +305,7 @@ pub(crate) fn display_animessage(
                             if debug {
                                 if del_last_line {
                                     move_to_previous_line(1);
-                                    println!("                                                ");
+                                    println!("                                                                           ");
                                     move_to_previous_line(1);
                                 }
                                 debug!("Received keys {:?}", &keys);
@@ -321,16 +321,16 @@ pub(crate) fn display_animessage(
                                 }
                             };
                             if keys.contains(&keycode_from_str) {
-                                if debug {
-                                    debug!(
-                                        "Key {:?} triggered this --[WAIT_FOR_INPUT]-- .",
-                                        &expected_key_clone
-                                    );
-                                }
                                 break 'key_loop;
                             }
                         }
                         sleep(Duration::from_millis(30));
+                    }
+                    if debug {
+                        debug!(
+                            "Key {:?} triggered this --[WAIT_FOR_INPUT]-- .",
+                            &expected_key
+                        );
                     }
                 }
             }

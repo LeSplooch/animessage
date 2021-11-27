@@ -305,6 +305,8 @@ pub(crate) fn display_animessage(
                             if debug {
                                 if del_last_line {
                                     move_to_previous_line(1);
+                                    println!("                                                ");
+                                    move_to_previous_line(1);
                                 }
                                 debug!("Received keys {:?}", &keys);
                                 if !del_last_line {

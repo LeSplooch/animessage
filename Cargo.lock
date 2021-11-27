@@ -47,7 +47,7 @@ dependencies = [
 
 [[package]]
 name = "animessage"
-version = "0.24.0"
+version = "0.24.1"
 dependencies = [
  "anyhow",
  "console_engine",

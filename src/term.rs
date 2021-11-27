@@ -30,6 +30,13 @@ pub(crate) fn move_cursor(columns: u16, rows: u16) {
     flush_stdout();
 }
 
+pub(crate) fn move_to_previous_line(lines_n: u16) {
+    crossterm::execute!(stdout(), cursor::MoveToPreviousLine(lines_n)).unwrap_or_else(|_| {
+        error!("Can't move the cursor in this terminal. Use another terminal such as Alacritty.");
+        std::process::exit(0)
+    });
+}
+
 pub(crate) fn flush_stdout() {
     if let Err(err) = stdout().flush() {
         warn!(

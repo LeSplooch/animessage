@@ -297,12 +297,19 @@ pub(crate) fn display_animessage(
 
                 if !no_exec {
                     let device_state = DeviceState::new();
+                    let mut del_last_line = false;
                     'key_loop: loop {
                         let keys = device_state.get_keys();
                         if !keys.is_empty() {
                             let expected_key_clone = expected_key.clone();
                             if debug {
+                                if del_last_line {
+                                    move_to_previous_line(1);
+                                }
                                 debug!("Received keys {:?}", &keys);
+                                if !del_last_line {
+                                    del_last_line = true;
+                                }
                             }
                             let keycode_from_str = match Keycode::from_str(&expected_key_clone) {
                                 Ok(key) => key,

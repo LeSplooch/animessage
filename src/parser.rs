@@ -1,3 +1,5 @@
+use viuer::terminal_size;
+
 use super::*;
 
 // Functions
@@ -301,12 +303,22 @@ pub(crate) fn display_animessage(
                     'key_loop: loop {
                         let keys = device_state.get_keys();
                         if debug {
+                            let dbg_msg = format!("Keys pressed : {:?}", &keys);
+                            let dbg_msg_lines_count = dbg_msg.lines().count();
                             if del_last_line {
-                                move_to_previous_line(1);
-                                println!("                                                                              ");
-                                move_to_previous_line(1);
+                                move_to_previous_line(dbg_msg_lines_count as u16);
+                                let cols = match terminal::size() {
+                                    Ok((cols, _)) => cols,
+                                    Err(_) => 68,
+                                };
+                                let mut erasing_line = String::with_capacity(cols as usize);
+                                for _ in 0..cols {
+                                    erasing_line.push(' ');
+                                }
+                                println!("{}", erasing_line);
+                                move_to_previous_line(dbg_msg_lines_count as u16);
                             }
-                            debug!("Keys pressed : {:?}", &keys);
+                            debug!("{}", dbg_msg);
                             if !del_last_line {
                                 del_last_line = true;
                             }

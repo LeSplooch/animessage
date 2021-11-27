@@ -303,7 +303,10 @@ pub(crate) fn display_animessage(
                     'key_loop: loop {
                         let keys = device_state.get_keys();
                         if debug {
-                            let dbg_msg = format!("Keys pressed : {:?}", &keys);
+                            let dbg_msg = format!(
+                                "Keys pressed : {:?}", 
+                                &keys
+                            );
                             let dbg_msg_lines_count = dbg_msg.lines().count();
                             if del_last_line {
                                 move_to_previous_line(dbg_msg_lines_count as u16);

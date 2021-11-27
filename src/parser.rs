@@ -80,11 +80,10 @@ pub(crate) fn display_animessage(
             // PRINT
             _ if line_trimmed.starts_with(PRINT) => {
                 let args = Args::parse(line_trimmed, 1, debug)?;
-                let (print_interval_f32, print_interval) = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
+                let print_interval = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
-
-                    if print_interval_f32 == 0.0 {
+                    if print_interval == Duration::ZERO {
                         if debug {
                             debug!("Printing this step all at once.");
                         }
@@ -117,11 +116,11 @@ pub(crate) fn display_animessage(
             // PRINT_LINE
             _ if line_trimmed.starts_with(PRINT_LINE) => {
                 let args = Args::parse(line_trimmed, 1, debug)?;
-                let (print_interval_f32, print_interval) = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
+                let print_interval = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
 
-                    if print_interval_f32 == 0.0 {
+                    if print_interval == Duration::ZERO {
                         if debug {
                             debug!("Printing this step all at once.");
                         }
@@ -211,7 +210,7 @@ pub(crate) fn display_animessage(
                 let args = Args::parse(line_trimmed, 1, debug)?;
                 let wait_time_str = args.get(0);
 
-                let (_, duration) = duration_from_arg(&wait_time_str);
+                let duration = duration_from_arg(&wait_time_str);
 
                 if debug {
                     debug!("Waiting for {:?} before continuing...", &duration);
@@ -426,7 +425,7 @@ pub(crate) fn display_animessage(
                     check_relative_path_ok(&image_path, relative_paths_ok);
                     if debug {
                         debug!(
-                            "Converting image from path to ASCII : {:?} ...",
+                            "Converting image for the terminal : {:?} ...",
                             &image_path
                         );
                     }

@@ -1,6 +1,6 @@
 [package]
 name = "animessage"
-version = "0.24.9"
+version = "0.24.11"
 authors = ["LeSplooch <34457355+LeSplooch@users.noreply.github.com>"]
 edition = "2021"
 
@@ -8,7 +8,7 @@ edition = "2021"
 
 [dependencies]
 structopt = "0.3.25"
-anyhow = "1.0.49"
+anyhow = "1.0.51"
 thiserror = "1.0.30"
 simple_logger = "1.15.0"
 log = "0.4.14"

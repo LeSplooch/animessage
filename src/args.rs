@@ -16,7 +16,6 @@ impl<'a> Args<'a> {
     pub(crate) fn parse(
         string_to_parse: &'a str,
         args_number_expected: usize,
-        debug: bool,
     ) -> ArgsResult<Self> {
         let args = string_to_parse
             .split('"')
@@ -24,11 +23,7 @@ impl<'a> Args<'a> {
             .skip(1)
             .step_by(2)
             .collect::<ArgsVec>();
-
-        // if debug {
-        //     debug!("Args : {:?}", &args)
-        // }
-
+            
         let args_number_received = args.len();
         if args_number_received != args_number_expected {
             return Err(ArgsError::WrongArgsAmount {

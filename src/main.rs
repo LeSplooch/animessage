@@ -120,7 +120,7 @@ fn process_markers(
         MarkerMode::Find => {
             for (index, l) in anim_lines_iter {
                 if l.starts_with(MARKER) {
-                    let args = Args::parse(l, 1, debug)?;
+                    let args = Args::parse(l, 1)?;
                     // TODO : Add one more arg to set an optional line to end with. -1 would be the last line.
                     if args.get(0) == marker {
                         if debug {
@@ -140,7 +140,7 @@ fn process_markers(
             let mut table = Table::new();
             for (index, l) in anim_lines_iter {
                 if l.starts_with(MARKER) {
-                    let args = Args::parse(l, 1, debug)?;
+                    let args = Args::parse(l, 1)?;
                     let marker_name = args.get(0);
                     let row = Row::new(vec![marker_name, &format!("{}", index + 1)]);
                     table.add_row(row);

@@ -81,7 +81,7 @@ pub(crate) fn display_animessage(
         match line {
             // PRINT
             _ if line_trimmed.starts_with(PRINT) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let print_interval = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
@@ -117,7 +117,7 @@ pub(crate) fn display_animessage(
 
             // PRINT_LINE
             _ if line_trimmed.starts_with(PRINT_LINE) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let print_interval = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
@@ -163,7 +163,7 @@ pub(crate) fn display_animessage(
                 let get_set_error_msg =
                     r#"VAR functions' 1st arg must define a "GET" or "SET" mode."#;
 
-                let args = Args::parse(line_trimmed, 4, debug)?;
+                let args = Args::parse(line_trimmed, 4)?;
                 let mode = args.get(0);
 
                 if !get_set_values.contains(&mode) {
@@ -182,7 +182,7 @@ pub(crate) fn display_animessage(
 
             // GOTO
             _ if line_trimmed.starts_with(GOTO) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let goto_line_number: usize = args.get(0)
                     .parse::<usize>()
                     .unwrap_or_else(|_| {
@@ -209,7 +209,7 @@ pub(crate) fn display_animessage(
 
             // WAIT
             _ if line_trimmed.starts_with(WAIT) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let wait_time_str = args.get(0);
 
                 let duration = duration_from_arg(&wait_time_str);
@@ -225,7 +225,7 @@ pub(crate) fn display_animessage(
 
             // REPLACE
             _ if line_trimmed.starts_with(REPLACE) => {
-                let args = Args::parse(line_trimmed, 3, debug)?;
+                let args = Args::parse(line_trimmed, 3)?;
                 let line_replace_number = args.get(0)
                     .parse::<usize>()
                     .unwrap_or_else(|_| {
@@ -261,7 +261,7 @@ pub(crate) fn display_animessage(
 
             // DEL_LINE
             _ if line_trimmed.starts_with(DEL_LINE) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let del_line_number_str = args.get(0);
                 let mut del_line_index = del_line_number_str // Still a line number at this point.
                     .parse::<usize>()
@@ -280,7 +280,7 @@ pub(crate) fn display_animessage(
 
             // WAIT_FOR_INPUT
             _ if line_trimmed.starts_with(WAIT_FOR_INPUT) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let mut expected_key = args.get(0).to_string();
 
                 if expected_key.chars().count() == 1 {
@@ -352,7 +352,7 @@ pub(crate) fn display_animessage(
 
             // OPEN_URL
             _ if line_trimmed.starts_with(OPEN_URL) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let url = args.get(0);
 
                 if url.contains(" ") {
@@ -397,7 +397,7 @@ pub(crate) fn display_animessage(
 
             // AUDIO
             _ if line_trimmed.starts_with(AUDIO) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let audio_path: PathBuf = args.get(0).into();
 
                 if !audio_path.as_os_str().is_empty() {
@@ -442,7 +442,7 @@ pub(crate) fn display_animessage(
 
             // ASCII_IMAGE
             _ if line_trimmed.starts_with(IMAGE) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let image_path: PathBuf = args.get(0).into();
 
                 if !image_path.as_os_str().is_empty() {
@@ -463,10 +463,8 @@ pub(crate) fn display_animessage(
                         };
 
                         let conf = viuer::Config {
-                            // set offset
                             x,
                             y: y as i16,
-                            // set dimensions
                             width: None,
                             height: None,
                             ..Default::default()
@@ -490,12 +488,12 @@ pub(crate) fn display_animessage(
 
             // VIDEO
             // _ if line_trimmed.starts_with(VIDEO) => {
-            //     let args = Args::parse(line_trimmed, 1, debug)?;
+            //     let args = Args::parse(line_trimmed, 1)?;
             // }
 
             // TITLE
             _ if line_trimmed.starts_with(TITLE) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let title = args.get(0);
 
                 crossterm::execute!(
@@ -513,7 +511,7 @@ pub(crate) fn display_animessage(
 
             // CLEAR
             _ if line_trimmed == CLEAR => {
-                let _ = Args::parse(line_trimmed, 0, debug);
+                let _ = Args::parse(line_trimmed, 0);
                 if debug {
                     debug!("Clearing terminal. This function has no effect in debug mode.");
                 } else {
@@ -523,21 +521,25 @@ pub(crate) fn display_animessage(
 
             // RESIZE
             _ if line_trimmed.starts_with(RESIZE) => {
-                let args = Args::parse(line_trimmed, 2, debug)?;
+                let args = Args::parse(line_trimmed, 2)?;
 
                 let columns = args.get(0).parse::<u16>().unwrap_or_else(|_| {
-                    error!("Can't convert arg to an integer between 0 and 65535 included.");
+                    error!("Can't convert arg to an integer between 0 and 65535 (included).");
                     std::process::exit(0)
                 });
                 let rows = args.get(1).parse::<u16>().unwrap_or_else(|_| {
-                    error!("Can't convert arg to an integer between 0 and 65535 included.");
+                    error!("Can't convert arg to an integer between 0 and 65535 (included).");
                     std::process::exit(0)
                 });
 
                 if debug {
-                    let current_terminal_size = terminal::size().unwrap();
+                    let current_terminal_size_string = if let Ok(current_terminal_size) = terminal::size() {
+                        format!("{:?}", current_terminal_size)
+                    } else {
+                        "<UNKNOWN>".to_string()
+                    };
                     let new_terminal_size = (columns, rows);
-                    debug!("Resizing the terminal from {:?} to {:?} (columns, rows). This function has no effect in debug mode.", current_terminal_size, new_terminal_size);
+                    debug!("Resizing the terminal from {} to {:?} (columns, rows). This function has no effect in debug mode.", current_terminal_size_string, new_terminal_size);
                 }
 
                 if !no_exec {
@@ -553,7 +555,7 @@ pub(crate) fn display_animessage(
 
             // MOVE_CURSOR
             _ if line_trimmed.starts_with(MOVE_CURSOR) => {
-                let args = Args::parse(line_trimmed, 2, debug)?;
+                let args = Args::parse(line_trimmed, 2)?;
 
                 let columns = args.get(0).parse::<u16>().unwrap_or_else(|_| {
                     error!("Can't convert arg to an integer between 0 and 65535 included.");
@@ -612,7 +614,7 @@ pub(crate) fn display_animessage(
 
             // INCLUDE
             _ if line_trimmed.starts_with(INCLUDE) => {
-                let args = Args::parse(line_trimmed, 1, debug)?;
+                let args = Args::parse(line_trimmed, 1)?;
                 let s_path: PathBuf = args.get(0).into();
 
                 if !s_path.as_os_str().is_empty() {

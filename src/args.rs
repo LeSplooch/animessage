@@ -13,17 +13,14 @@ pub(crate) struct Args<'a> {
 
 impl<'a> Args<'a> {
     // TODO : create a nested enum in the not yet created 'animessage::Error' enum (in main.rs) for parsing errors and replace anyhow::Error with the corresponding variant
-    pub(crate) fn parse(
-        string_to_parse: &'a str,
-        args_number_expected: usize,
-    ) -> ArgsResult<Self> {
+    pub(crate) fn parse(string_to_parse: &'a str, args_number_expected: usize) -> ArgsResult<Self> {
         let args = string_to_parse
             .split('"')
             .into_iter()
             .skip(1)
             .step_by(2)
             .collect::<ArgsVec>();
-            
+
         let args_number_received = args.len();
         if args_number_received != args_number_expected {
             return Err(ArgsError::WrongArgsAmount {

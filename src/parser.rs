@@ -1,3 +1,4 @@
+use inquire::error::InquireError;
 use viuer::terminal_size;
 
 use super::*;
@@ -121,7 +122,6 @@ pub(crate) fn display_animessage(
                 let print_interval = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
-
                     if print_interval == Duration::ZERO {
                         if debug {
                             debug!("Printing this step all at once.");
@@ -168,7 +168,7 @@ pub(crate) fn display_animessage(
 
                 if !get_set_values.contains(&mode) {
                     error!("{}", get_set_error_msg);
-                    std::process::exit(0);
+                    return Ok(());
                 }
 
                 let var_name = args.get(1);
@@ -183,12 +183,13 @@ pub(crate) fn display_animessage(
             // GOTO
             _ if line_trimmed.starts_with(GOTO) => {
                 let args = Args::parse(line_trimmed, 1)?;
-                let goto_line_number: usize = args.get(0)
-                    .parse::<usize>()
-                    .unwrap_or_else(|_| {
+                let goto_line_number: usize = match args.get(0).parse::<usize>() {
+                    Ok(gln) => gln,
+                    Err(_err) => {
                         error!("Can't convert arg into zero or a positive number, or your integer is too big.");
-                        std::process::exit(0);
-                    });
+                        return Ok(());
+                    }
+                };
 
                 if !gotos_cache.contains_key(&line_number) {
                     if debug {
@@ -226,12 +227,13 @@ pub(crate) fn display_animessage(
             // REPLACE
             _ if line_trimmed.starts_with(REPLACE) => {
                 let args = Args::parse(line_trimmed, 3)?;
-                let line_replace_number = args.get(0)
-                    .parse::<usize>()
-                    .unwrap_or_else(|_| {
+                let line_replace_number = match args.get(0).parse::<usize>() {
+                    Ok(lrn) => lrn,
+                    Err(_err) => {
                         error!("Can't convert arg into zero or a positive integer, or your integer is too big.");
-                        std::process::exit(0)
-                    });
+                        return Ok(())
+                    }
+                };
 
                 let replace_from = args.get(1);
                 let replace_with = args.get(2);
@@ -263,12 +265,13 @@ pub(crate) fn display_animessage(
             _ if line_trimmed.starts_with(DEL_LINE) => {
                 let args = Args::parse(line_trimmed, 1)?;
                 let del_line_number_str = args.get(0);
-                let mut del_line_index = del_line_number_str // Still a line number at this point.
-                    .parse::<usize>()
-                    .unwrap_or_else(|_| {
+                let mut del_line_index = match del_line_number_str.parse::<usize>() {
+                    Ok(dli) => dli,
+                    Err(_err) => {
                         error!("Can't convert arg into zero or a positive integer, or your integer is too big.");
-                        std::process::exit(0)
-                    });
+                        return Ok(())
+                    }
+                };
                 del_line_index -= 1; // Now it's actually a line index.
 
                 lines.remove(del_line_index);
@@ -303,10 +306,7 @@ pub(crate) fn display_animessage(
                     'key_loop: loop {
                         let keys = device_state.get_keys();
                         if debug {
-                            let dbg_msg = format!(
-                                "Keys pressed : {:?}", 
-                                &keys
-                            );
+                            let dbg_msg = format!("Keys pressed : {:?}", &keys);
                             let dbg_msg_lines_count = dbg_msg.lines().count();
                             if del_last_line {
                                 move_to_previous_line(dbg_msg_lines_count as u16);
@@ -332,7 +332,7 @@ pub(crate) fn display_animessage(
                                 Ok(key) => key,
                                 Err(_) => {
                                     error!("Key {:?} isn't supported or isn't a correct key. Please replace the key in your animessage with an alphanumeric key, or a special common key (such as LControl for example) instead.", &expected_key_clone);
-                                    std::process::exit(0)
+                                    return Ok(())
                                 }
                             };
                             if keys.contains(&keycode_from_str) {
@@ -357,7 +357,7 @@ pub(crate) fn display_animessage(
 
                 if url.contains(" ") {
                     error!("Your URL must not contain whitespaces because it can open several links. Remove all whitespaces. If your link contains whitespaces, replace them with %20 instead.");
-                    std::process::exit(0)
+                    return Ok(())
                 }
 
                 if !url.is_empty() {
@@ -371,27 +371,36 @@ pub(crate) fn display_animessage(
                             "Type \"y\" to accept or \"n\" to refuse, and then press \"Enter\".",
                         )
                         .prompt();
-                    if let Ok(true) = yes {
-                        if !no_exec {
-                            let webbrowser_result = webbrowser::open(&url);
-                            if debug {
-                                match webbrowser_result {
-                                    Ok(_) => debug!("Successfully opened URL {:?}.", &url),
-                                    Err(err) => warn!(
-                                        "URL has not been opened {:?}. Error details :\n{:#?}",
-                                        &url, &err
-                                    ),
+                    match yes {
+                        Ok(true) => {
+                            if !no_exec {
+                                let webbrowser_result = webbrowser::open(&url);
+                                if debug {
+                                    match webbrowser_result {
+                                        Ok(_) => debug!("Successfully opened URL {:?}.", &url),
+                                        Err(err) => warn!(
+                                            "URL has not been opened {:?}. Error details :\n{:#?}",
+                                            &url, &err
+                                        ),
+                                    }
                                 }
                             }
                         }
-                    } else {
-                        if debug {
-                            debug!("Refused opening URL {:?}.", &url);
+                        Ok(false) => {
+                            if debug {
+                                debug!("Refused opening URL {:?}.", &url);
+                            }
                         }
+                        Err(InquireError::OperationCanceled) => {
+                            if debug {
+                                debug!("Ignored opening URL {:?}.", &url);
+                            }
+                        }
+                        Err(_) => (),
                     }
                 } else {
                     error!("URL is empty. Please enter an URL as the 1st argument.");
-                    std::process::exit(0)
+                    return Ok(());
                 }
             }
 
@@ -422,7 +431,7 @@ pub(crate) fn display_animessage(
                                 }
                                 Err(e) => {
                                     error!("AUDIO ERROR : Can't read audio from file {:?} . Error : \n{}", &audio_path, e.to_string());
-                                    std::process::exit(0)
+                                    return Ok(());
                                 }
                             }
                         }
@@ -431,12 +440,12 @@ pub(crate) fn display_animessage(
                                 "FILE ERROR : Can't open audio file. Error : \n{}",
                                 e.to_string()
                             );
-                            std::process::exit(0)
+                            return Ok(());
                         }
                     }
                 } else {
                     error!("ARG ERROR : Please specify a path as 1st argument of --[AUDIO]-- :\n--[AUDIO]-- path/to/file.mp3");
-                    std::process::exit(0)
+                    return Ok(());
                 }
             }
 
@@ -448,10 +457,7 @@ pub(crate) fn display_animessage(
                 if !image_path.as_os_str().is_empty() {
                     check_relative_path_ok(&image_path, relative_paths_ok);
                     if debug {
-                        debug!(
-                            "Converting image for the terminal : {:?} ...",
-                            &image_path
-                        );
+                        debug!("Converting image for the terminal : {:?} ...", &image_path);
                     }
                     if !no_exec {
                         let (x, y) = match cursor::position() {
@@ -482,7 +488,7 @@ pub(crate) fn display_animessage(
                     }
                 } else {
                     error!("ARG ERROR : Please specify a path as 1st argument of --[ASCII_IMAGE]-- :\n--[ASCII_IMAGE]-- path/to/file.jpg");
-                    std::process::exit(0)
+                    return Ok(());
                 }
             }
 
@@ -496,13 +502,10 @@ pub(crate) fn display_animessage(
                 let args = Args::parse(line_trimmed, 1)?;
                 let title = args.get(0);
 
-                crossterm::execute!(
-                    stdout(),
-                    terminal::SetTitle(&title)
-                ).unwrap_or_else(|_| {
+                if let Err(_err) = crossterm::execute!(stdout(), terminal::SetTitle(&title)) {
                     error!("Can't set terminal's title. Please use a terminal that supports title changes, such as Alacritty 0.5 or above.");
-                    std::process::exit(0)
-                });
+                    return Ok(());
+                }
 
                 if debug {
                     debug!("Terminal title set to {:?}", title);
@@ -523,33 +526,41 @@ pub(crate) fn display_animessage(
             _ if line_trimmed.starts_with(RESIZE) => {
                 let args = Args::parse(line_trimmed, 2)?;
 
-                let columns = args.get(0).parse::<u16>().unwrap_or_else(|_| {
-                    error!("Can't convert arg to an integer between 0 and 65535 (included).");
-                    std::process::exit(0)
-                });
-                let rows = args.get(1).parse::<u16>().unwrap_or_else(|_| {
-                    error!("Can't convert arg to an integer between 0 and 65535 (included).");
-                    std::process::exit(0)
-                });
+                let columns = match args.get(0).parse::<u16>() {
+                    Ok(cols) => cols,
+                    Err(_err) => {
+                        error!("Can't convert arg to an integer between 0 and 65535 included.");
+                        return Ok(());
+                    }
+                };
+                let rows = match args.get(1).parse::<u16>() {
+                    Ok(rows) => rows,
+                    Err(_err) => {
+                        error!("Can't convert arg to an integer between 0 and 65535 included.");
+                        return Ok(());
+                    }
+                };
 
                 if debug {
-                    let current_terminal_size_string = if let Ok(current_terminal_size) = terminal::size() {
-                        format!("{:?}", current_terminal_size)
-                    } else {
-                        "<UNKNOWN>".to_string()
-                    };
+                    let current_terminal_size_string =
+                        if let Ok(current_terminal_size) = terminal::size() {
+                            format!("{:?}", current_terminal_size)
+                        } else {
+                            "<UNKNOWN>".to_string()
+                        };
                     let new_terminal_size = (columns, rows);
                     debug!("Resizing the terminal from {} to {:?} (columns, rows). This function has no effect in debug mode.", current_terminal_size_string, new_terminal_size);
                 }
 
                 if !no_exec {
-                    crossterm::execute!(
-                        stdout(),
-                        terminal::SetSize(columns, rows)
-                    ).unwrap_or_else(|_| {
-                        error!("Can't resize this terminal. Use another terminal such as Alacritty.");
-                        std::process::exit(0)
-                    });
+                    if let Err(_err) =
+                        crossterm::execute!(stdout(), terminal::SetSize(columns, rows))
+                    {
+                        error!(
+                            "Can't resize this terminal. Use another terminal such as Alacritty."
+                        );
+                        return Ok(())
+                    };
                 }
             }
 
@@ -557,14 +568,20 @@ pub(crate) fn display_animessage(
             _ if line_trimmed.starts_with(MOVE_CURSOR) => {
                 let args = Args::parse(line_trimmed, 2)?;
 
-                let columns = args.get(0).parse::<u16>().unwrap_or_else(|_| {
-                    error!("Can't convert arg to an integer between 0 and 65535 included.");
-                    std::process::exit(0)
-                });
-                let rows = args.get(1).parse::<u16>().unwrap_or_else(|_| {
-                    error!("Can't convert arg to an integer between 0 and 65535 included.");
-                    std::process::exit(0)
-                });
+                let columns = match args.get(0).parse::<u16>() {
+                    Ok(cols) => cols,
+                    Err(_err) => {
+                        error!("Can't convert arg to an integer between 0 and 65535 included.");
+                        return Ok(());
+                    }
+                };
+                let rows = match args.get(1).parse::<u16>() {
+                    Ok(rows) => rows,
+                    Err(_err) => {
+                        error!("Can't convert arg to an integer between 0 and 65535 included.");
+                        return Ok(());
+                    }
+                };
 
                 if debug {
                     debug!(
@@ -581,12 +598,12 @@ pub(crate) fn display_animessage(
             // HIDE_CURSOR
             _ if line_trimmed == HIDE_CURSOR => {
                 if !no_exec {
-                    crossterm::execute!(stdout(), cursor::Hide).unwrap_or_else(|_| {
+                    if let Err(_err) = crossterm::execute!(stdout(), cursor::Hide) {
                         error!(
                             "Can't resize this terminal. Use another terminal such as Alacritty."
                         );
-                        std::process::exit(0)
-                    });
+                        return Ok(());
+                    }
                 }
 
                 if debug {
@@ -599,12 +616,12 @@ pub(crate) fn display_animessage(
             // SHOW_CURSOR
             _ if line_trimmed == SHOW_CURSOR => {
                 if !no_exec {
-                    crossterm::execute!(stdout(), cursor::Show).unwrap_or_else(|_| {
+                    if let Err(_err) = crossterm::execute!(stdout(), cursor::Show) {
                         error!(
                             "Can't resize this terminal. Use another terminal such as Alacritty."
                         );
-                        std::process::exit(0)
-                    });
+                        return Ok(());
+                    }
                 }
 
                 if debug {
@@ -637,12 +654,12 @@ pub(crate) fn display_animessage(
                         }
                         Err(_) => {
                             error!("FILE ERROR : Can't read file as text");
-                            std::process::exit(0)
+                            return Ok(())
                         }
                     }
                 } else {
                     error!("ARG ERROR : Please specify a path as 1st argument of --[INCLUDE]-- :\n--[INCLUDE]-- path/to/file.txt");
-                    std::process::exit(0)
+                    return Ok(())
                 }
             }
 

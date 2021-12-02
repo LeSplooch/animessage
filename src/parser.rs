@@ -168,7 +168,7 @@ pub(crate) fn display_animessage(
 
                 if !get_set_values.contains(&mode) {
                     error!("{}", get_set_error_msg);
-                    return Ok(());
+                    return Ok(())
                 }
 
                 let var_name = args.get(1);
@@ -187,7 +187,7 @@ pub(crate) fn display_animessage(
                     Ok(gln) => gln,
                     Err(_err) => {
                         error!("Can't convert arg into zero or a positive number, or your integer is too big.");
-                        return Ok(());
+                        return Ok(())
                     }
                 };
 
@@ -297,18 +297,19 @@ pub(crate) fn display_animessage(
                 }
 
                 if debug {
-                    debug!("Expecting key {:?} ...", &expected_key);
+                    debug!("Expecting key {:?} ...\n", &expected_key);
                 }
 
                 if !no_exec {
                     let device_state = DeviceState::new();
                     let mut del_last_line = false;
+                    let mut last_dbg_msg = String::new();
                     'key_loop: loop {
                         let keys = device_state.get_keys();
                         if debug {
                             let dbg_msg = format!("Keys pressed : {:?}", &keys);
                             let dbg_msg_lines_count = dbg_msg.lines().count();
-                            if del_last_line {
+                            if del_last_line && dbg_msg != last_dbg_msg {
                                 move_to_previous_line(dbg_msg_lines_count as u16);
                                 let cols = match terminal::size() {
                                     Ok((cols, _)) => cols,
@@ -320,8 +321,9 @@ pub(crate) fn display_animessage(
                                 }
                                 println!("{}", erasing_line);
                                 move_to_previous_line(dbg_msg_lines_count as u16);
+                                debug!("{}", dbg_msg);
+                                last_dbg_msg = dbg_msg;
                             }
-                            debug!("{}", dbg_msg);
                             if !del_last_line {
                                 del_last_line = true;
                             }
@@ -400,7 +402,7 @@ pub(crate) fn display_animessage(
                     }
                 } else {
                     error!("URL is empty. Please enter an URL as the 1st argument.");
-                    return Ok(());
+                    return Ok(())
                 }
             }
 
@@ -431,7 +433,7 @@ pub(crate) fn display_animessage(
                                 }
                                 Err(e) => {
                                     error!("AUDIO ERROR : Can't read audio from file {:?} . Error : \n{}", &audio_path, e.to_string());
-                                    return Ok(());
+                                    return Ok(())
                                 }
                             }
                         }
@@ -440,12 +442,12 @@ pub(crate) fn display_animessage(
                                 "FILE ERROR : Can't open audio file. Error : \n{}",
                                 e.to_string()
                             );
-                            return Ok(());
+                            return Ok(())
                         }
                     }
                 } else {
                     error!("ARG ERROR : Please specify a path as 1st argument of --[AUDIO]-- :\n--[AUDIO]-- path/to/file.mp3");
-                    return Ok(());
+                    return Ok(())
                 }
             }
 
@@ -464,7 +466,7 @@ pub(crate) fn display_animessage(
                             Ok(pos) => pos,
                             Err(err) => {
                                 error!("Can't obtain cursor position : {:?}", err);
-                                return Ok(());
+                                return Ok(())
                             }
                         };
 
@@ -477,7 +479,7 @@ pub(crate) fn display_animessage(
                         };
                         if let Err(err) = viuer::print_from_file(image_path, &conf) {
                             error!("Printing image failed : {:?}", err);
-                            return Ok(());
+                            return Ok(())
                         }
 
                         // crossterm::execute!(
@@ -488,7 +490,7 @@ pub(crate) fn display_animessage(
                     }
                 } else {
                     error!("ARG ERROR : Please specify a path as 1st argument of --[ASCII_IMAGE]-- :\n--[ASCII_IMAGE]-- path/to/file.jpg");
-                    return Ok(());
+                    return Ok(())
                 }
             }
 
@@ -504,7 +506,7 @@ pub(crate) fn display_animessage(
 
                 if let Err(_err) = crossterm::execute!(stdout(), terminal::SetTitle(&title)) {
                     error!("Can't set terminal's title. Please use a terminal that supports title changes, such as Alacritty 0.5 or above.");
-                    return Ok(());
+                    return Ok(())
                 }
 
                 if debug {
@@ -530,14 +532,14 @@ pub(crate) fn display_animessage(
                     Ok(cols) => cols,
                     Err(_err) => {
                         error!("Can't convert arg to an integer between 0 and 65535 included.");
-                        return Ok(());
+                        return Ok(())
                     }
                 };
                 let rows = match args.get(1).parse::<u16>() {
                     Ok(rows) => rows,
                     Err(_err) => {
                         error!("Can't convert arg to an integer between 0 and 65535 included.");
-                        return Ok(());
+                        return Ok(())
                     }
                 };
 
@@ -572,14 +574,14 @@ pub(crate) fn display_animessage(
                     Ok(cols) => cols,
                     Err(_err) => {
                         error!("Can't convert arg to an integer between 0 and 65535 included.");
-                        return Ok(());
+                        return Ok(())
                     }
                 };
                 let rows = match args.get(1).parse::<u16>() {
                     Ok(rows) => rows,
                     Err(_err) => {
                         error!("Can't convert arg to an integer between 0 and 65535 included.");
-                        return Ok(());
+                        return Ok(())
                     }
                 };
 
@@ -602,7 +604,7 @@ pub(crate) fn display_animessage(
                         error!(
                             "Can't resize this terminal. Use another terminal such as Alacritty."
                         );
-                        return Ok(());
+                        return Ok(())
                     }
                 }
 
@@ -620,7 +622,7 @@ pub(crate) fn display_animessage(
                         error!(
                             "Can't resize this terminal. Use another terminal such as Alacritty."
                         );
-                        return Ok(());
+                        return Ok(())
                     }
                 }
 

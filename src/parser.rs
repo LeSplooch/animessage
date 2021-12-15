@@ -82,7 +82,7 @@ pub(crate) fn display_animessage(
             // PRINT
             _ if line_trimmed.starts_with(PRINT) => {
                 let args = Args::parse(line_trimmed, 1)?;
-                let print_interval = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
+                let print_interval = duration_from_arg(args.get(0))?; // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
                     if print_interval == Duration::ZERO {
@@ -118,7 +118,7 @@ pub(crate) fn display_animessage(
             // PRINT_LINE
             _ if line_trimmed.starts_with(PRINT_LINE) => {
                 let args = Args::parse(line_trimmed, 1)?;
-                let print_interval = duration_from_arg(args.get(0)); // We have verified that the number of args is correct so we can index as we please.
+                let print_interval = duration_from_arg(args.get(0))?; // We have verified that the number of args is correct so we can index as we please.
 
                 if !current_step.is_empty() {
                     if print_interval == Duration::ZERO {
@@ -212,7 +212,7 @@ pub(crate) fn display_animessage(
                 let args = Args::parse(line_trimmed, 1)?;
                 let wait_time_str = args.get(0);
 
-                let duration = duration_from_arg(&wait_time_str);
+                let duration = duration_from_arg(&wait_time_str)?;
 
                 if debug {
                     debug!("Waiting for {:?} before continuing...", &duration);

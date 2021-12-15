@@ -71,13 +71,14 @@ pub(crate) enum ArgsError {
 
 pub(crate) type ArgsResult<T> = Result<T, ArgsError>;
 
-pub(crate) fn duration_from_arg(duration: &str) -> Duration {
-    let duration_f64 = duration
-        .parse::<f64>()
-        .unwrap_or_else(|_| {
-            error!("Can't convert the 1st argument into a decimal. Make sure your number is written as a decimal and not an integer. Example : Write 1.0 instead of 1.");
-            std::process::exit(0)
-        });
+pub(crate) fn duration_from_arg(duration: &str) -> anyhow::Result<Duration> {
+    match duration.parse::<f64>() {
+        Ok(f) => {
+            return Ok(Duration::from_secs_f64(f))
+        },
+        Err(_) => {
+            anyhow::bail!("Can't convert the 1st argument into a decimal. Make sure your number is written as a decimal and not an integer. Example : Write 1.0 instead of 1.");
+        },
+    }
 
-    Duration::from_secs_f64(duration_f64)
 }

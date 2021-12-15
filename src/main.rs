@@ -1,4 +1,4 @@
-use std::{cell::RefCell, io::Read, mem::MaybeUninit, path};
+use std::{cell::RefCell, io::Read, mem::MaybeUninit, path, fs};
 
 use anyhow::bail;
 use envmnt::{exists, get_list};
@@ -220,16 +220,14 @@ fn main() -> AnyResult<()> {
     // Open either default file or tutorial or specified file, in this order.
     let default_file = PathBuf::from("run.anim");
     if default_file.exists() && file.is_none() {
-        match File::open(default_file) {
-            Ok(mut file) => {
-                let mut buf = String::new();
-                let _bytes_read = file.read_to_string(&mut buf);
+        match fs::read_to_string(default_file) {
+            Ok(buf) => {
                 display_animessage(&buf, true, false, false, 0)?;
                 print_title();
                 return Ok(());
             }
             Err(err) => {
-                error!("Couldn't open default 'run.anim' file in this folder. Falling back to opening the tutorial / a given file...\nError details :\n{:?}", err)
+                error!("Couldn't open default 'run.anim' file in this folder. Falling back to opening the tutorial / a given file...\nError details : {:?}", err)
             }
         }
     }

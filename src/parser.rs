@@ -48,7 +48,6 @@ pub(crate) fn display_animessage(
     let mut vars: BTreeMap<String, Variable> = BTreeMap::new();
 
     let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
-    // let mut audio_controller: Option<rodio::Sink> = None;
 
     let mut lines: Vec<String> = animessage_str // IDEA : Change to a BTreeMap<usize, String> if keeping lines number/index in place becomes necessary.
         .lines()
@@ -59,7 +58,7 @@ pub(crate) fn display_animessage(
     let lines_number_count = lines.len().to_string().chars().count();
 
     if !debug {
-        // clear_terminal();
+        // clear_terminal()
         // move_cursor(0, 0);
         save_cursor_position();
     }

@@ -80,5 +80,4 @@ pub(crate) fn duration_from_arg(duration: &str) -> anyhow::Result<Duration> { //
             anyhow::bail!("Can't convert the 1st argument into a decimal. Make sure your number is written as a decimal and not an integer. Example : Write 1.0 instead of 1.");
         },
     }
-
 }

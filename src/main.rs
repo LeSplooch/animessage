@@ -222,7 +222,21 @@ fn main() -> AnyResult<()> {
     if default_file.exists() && file.is_none() {
         match fs::read_to_string(default_file) {
             Ok(buf) => {
-                display_animessage(&buf, true, false, false, 0)?;
+                if markers_summary {
+                    let marker_mode = MarkerMode::Summary;
+                    process_markers(&buf, "", debug, marker_mode)?;
+                    return Ok(());
+                } else {
+                    let marker_mode = MarkerMode::Find;
+                    let start_index = if let Some(marker) = marker {
+                        process_markers(&buf, &marker, debug, marker_mode)?
+                    } else {
+                        0
+                    };
+        
+                    display_animessage(&buf, true, debug, no_exec, start_index)?;
+                }
+
                 print_title();
                 return Ok(());
             }

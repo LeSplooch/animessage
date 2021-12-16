@@ -188,34 +188,34 @@ fn main() -> AnyResult<()> {
     let marker: Option<String> = options.marker;
     let markers_summary: bool = options.summary;
 
-    #[cfg(windows)]
-    {
-        // Put Animessage in the Path
-        let path_list = envmnt::get_list("Path");
-        if let Some(mut path_list) = path_list {
-            let app_dir_path = std::env::current_dir()?;
-            let app_dir_path_string: String =
-                app_dir_path.as_os_str().to_str().unwrap().to_string();
+    // #[cfg(windows)]
+    // {
+    //     // Put Animessage in the Path
+    //     let path_list = envmnt::get_list("Path");
+    //     if let Some(mut path_list) = path_list {
+    //         let app_dir_path = std::env::current_dir()?;
+    //         let app_dir_path_string: String =
+    //             app_dir_path.as_os_str().to_str().unwrap().to_string();
 
-            let mut is_in_path = false;
-            for value in path_list.clone() {
-                if value == app_dir_path_string {
-                    is_in_path = true;
-                    if debug {
-                        debug!("Animessage is in the Path (env vars).")
-                    }
-                    break;
-                }
-            }
-            if !is_in_path {
-                path_list.push(app_dir_path_string.clone());
-                envmnt::set_list("Path", &path_list);
-                if debug {
-                    debug!("Animessage has been added to the Path (env vars).")
-                }
-            }
-        }
-    }
+    //         let mut is_in_path = false;
+    //         for value in path_list.clone() {
+    //             if value == app_dir_path_string {
+    //                 is_in_path = true;
+    //                 if debug {
+    //                     debug!("Animessage is in the Path (env vars).")
+    //                 }
+    //                 break;
+    //             }
+    //         }
+    //         if !is_in_path {
+    //             path_list.push(app_dir_path_string.clone());
+    //             envmnt::set_list("Path", &path_list);
+    //             if debug {
+    //                 debug!("Animessage has been added to the Path (env vars).")
+    //             }
+    //         }
+    //     }
+    // }
 
     // Open either default file or tutorial or specified file, in this order.
     let default_file = PathBuf::from("run.anim");
@@ -248,18 +248,7 @@ fn main() -> AnyResult<()> {
         }
     } else {
         let file: PathBuf = file.unwrap();
-        let animessage_absolute_path = file
-            .as_path()
-            .canonicalize()?
-            .to_str()
-            .unwrap()
-            .replace("\\\\?\\", "");
-
-        let animessage_absolute_path: PathBuf = animessage_absolute_path.into();
-
-        let animessage_dir_absolute_path = animessage_absolute_path.parent().unwrap();
-
-        let animessage_string = read_to_string(&file).unwrap();
+        let animessage_string = read_to_string(&file)?;
 
         if markers_summary {
             let marker_mode = MarkerMode::Summary;
@@ -272,6 +261,17 @@ fn main() -> AnyResult<()> {
         } else {
             0
         };
+
+        let animessage_absolute_path = file
+            .as_path()
+            .canonicalize()?
+            .to_str()
+            .unwrap()
+            .replace("\\\\?\\", "");
+
+        let animessage_absolute_path: PathBuf = animessage_absolute_path.into();
+
+        let animessage_dir_absolute_path = animessage_absolute_path.parent().unwrap();
 
         let mut relative_paths_ok = false;
 

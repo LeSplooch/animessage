@@ -519,7 +519,7 @@ pub(crate) fn display_animessage(
                 if debug {
                     debug!("Clearing terminal. This function has no effect in debug mode.");
                 } else {
-                    clear_terminal()
+                    clear_terminal()?
                 }
             }
 
@@ -679,9 +679,9 @@ pub(crate) fn display_animessage(
             _ if line_trimmed == EMPTY => current_step.push_str("\n"),
 
             // NOTE, MARKER, REAL, FORMATTING EMPTY LINE
-            _ if line_trimmed.starts_with(NOTE)
+            _ if line_trimmed.is_empty()
                 || line_trimmed.starts_with(MARKER)
-                || line_trimmed.is_empty() =>
+                || line_trimmed.starts_with(NOTE) =>
             {
                 ()
             }

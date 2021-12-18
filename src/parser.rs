@@ -1,3 +1,4 @@
+use crossterm::ExecutableCommand;
 use inquire::error::InquireError;
 use viuer::terminal_size;
 
@@ -58,9 +59,9 @@ pub(crate) fn display_animessage(
     let lines_number_count = lines.len().to_string().chars().count();
 
     if !debug {
-        // clear_terminal()
-        // move_cursor(0, 0);
-        save_cursor_position();
+        // clear_terminal()?
+        // move_cursor(0, 0)?;
+        save_cursor_position()?;
     }
 
     let mut line_index: usize = start_index;
@@ -309,7 +310,7 @@ pub(crate) fn display_animessage(
                             let dbg_msg = format!("Keys pressed : {:?}", &keys);
                             let dbg_msg_lines_count = dbg_msg.lines().count();
                             if del_last_line && dbg_msg != last_dbg_msg {
-                                move_to_previous_line(dbg_msg_lines_count as u16);
+                                move_to_previous_line(dbg_msg_lines_count as u16)?;
                                 let cols = match terminal::size() {
                                     Ok((cols, _)) => cols,
                                     Err(_) => 68,
@@ -319,7 +320,7 @@ pub(crate) fn display_animessage(
                                     erasing_line.push(' ');
                                 }
                                 println!("{}", erasing_line);
-                                move_to_previous_line(dbg_msg_lines_count as u16);
+                                move_to_previous_line(dbg_msg_lines_count as u16)?;
                                 debug!("{}", dbg_msg);
                                 last_dbg_msg = dbg_msg;
                             }
@@ -503,7 +504,7 @@ pub(crate) fn display_animessage(
                 let args = Args::parse(line_trimmed, 1)?;
                 let title = args.get(0);
 
-                if let Err(_err) = crossterm::execute!(stdout(), terminal::SetTitle(&title)) {
+                if let Err(_err) = stdout().execute(terminal::SetTitle(&title)) {
                     error!("Can't set terminal's title. Please use a terminal that supports title changes, such as Alacritty 0.5 or above.");
                     return Ok(())
                 }
@@ -592,7 +593,7 @@ pub(crate) fn display_animessage(
                 }
 
                 if !debug {
-                    move_cursor(columns, rows);
+                    move_cursor(columns, rows)?;
                 }
             }
 

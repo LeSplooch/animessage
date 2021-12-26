@@ -1,4 +1,4 @@
-use std::{cell::RefCell, io::Read, mem::MaybeUninit, path, fs};
+use std::{cell::RefCell, fs, io::Read, mem::MaybeUninit, path};
 
 use anyhow::bail;
 use envmnt::{exists, get_list};
@@ -233,7 +233,7 @@ fn main() -> AnyResult<()> {
                     } else {
                         0
                     };
-        
+
                     display_animessage(&buf, true, debug, no_exec, start_index)?;
                 }
 

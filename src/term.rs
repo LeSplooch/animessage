@@ -3,21 +3,23 @@ use crossterm::{terminal, ExecutableCommand};
 pub(crate) fn clear_terminal() -> anyhow::Result<()> {
     match stdout().execute(terminal::Clear(ClearType::All)) {
         Ok(_exec_ref) => Ok(()),
-        Err(_err) => anyhow::bail!("Can't clear lines in this terminal. Animessage can't work properly.")
+        Err(_err) => {
+            anyhow::bail!("Can't clear lines in this terminal. Animessage can't work properly.")
+        }
     }
 }
 
 pub(crate) fn save_cursor_position() -> anyhow::Result<()> {
     match stdout().execute(cursor::SavePosition) {
         Ok(_exec_ref) => Ok(()),
-        Err(_err) => anyhow::bail!("Can't save the position of the cursor.")
+        Err(_err) => anyhow::bail!("Can't save the position of the cursor."),
     }
 }
 
 pub(crate) fn restore_cursor_position() -> anyhow::Result<()> {
     match stdout().execute(cursor::RestorePosition) {
         Ok(_exec_ref) => Ok(()),
-        Err(_err) => anyhow::bail!("Can't restore the position of the cursor.")
+        Err(_err) => anyhow::bail!("Can't restore the position of the cursor."),
     }
 }
 
@@ -26,15 +28,19 @@ pub(crate) fn move_cursor(columns: u16, rows: u16) -> anyhow::Result<()> {
         Ok(_exec_ref) => {
             flush_stdout();
             Ok(())
-        },
-        Err(_err) => anyhow::bail!("Can't move the cursor in this terminal. Use another terminal such as Alacritty.")
+        }
+        Err(_err) => anyhow::bail!(
+            "Can't move the cursor in this terminal. Use another terminal such as Alacritty."
+        ),
     }
 }
 
 pub(crate) fn move_to_previous_line(lines_n: u16) -> anyhow::Result<()> {
     match stdout().execute(cursor::MoveToPreviousLine(lines_n)) {
         Ok(_exec_ref) => Ok(()),
-        Err(_err) => anyhow::bail!("Can't move the cursor in this terminal. Use another terminal such as Alacritty.")
+        Err(_err) => anyhow::bail!(
+            "Can't move the cursor in this terminal. Use another terminal such as Alacritty."
+        ),
     }
 }
 

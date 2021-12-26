@@ -475,6 +475,9 @@ pub(crate) fn display_animessage(
                             y: y as i16,
                             width: None,
                             height: None,
+                            use_kitty: true,
+                            use_iterm: true,
+                            // use_sixel: false,
                             ..Default::default()
                         };
                         if let Err(err) = viuer::print_from_file(image_path, &conf) {

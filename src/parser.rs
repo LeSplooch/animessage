@@ -243,7 +243,7 @@ pub(crate) fn display_animessage(
                 let array_replace: [String; 2] =
                     [replace_from.to_string(), replace_with.to_string()];
 
-                if replaces_cache_entry.is_none() || replaces_cache_entry.unwrap() != &array_replace
+                if replaces_cache_entry != Some(&array_replace)
                 {
                     if debug {
                         debug!(

@@ -164,12 +164,11 @@ fn process_markers(
 }
 
 fn main() -> AnyResult<()> {
-    let logger_result = SimpleLogger::default()
+    let _logger_result = SimpleLogger::default()
         .with_level(LevelFilter::Debug)
         .with_colors(true)
         .without_timestamps()
         .init();
-    dbg!(logger_result);
 
     ctrlc::set_handler(move || {
         std::process::exit({

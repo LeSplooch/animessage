@@ -282,10 +282,14 @@ fn main() -> AnyResult<()> {
 
         let animessage_absolute_path = file
             .as_path()
-            .canonicalize()?
+            .canonicalize()?;
+        let mut animessage_absolute_path = animessage_absolute_path
             .to_str()
             .unwrap()
-            .replace("\\\\?\\", "");
+            .to_string();
+        if cfg!(windows) {
+            animessage_absolute_path = animessage_absolute_path.replace("\\\\?\\", "");
+        }
 
         let animessage_absolute_path: PathBuf = animessage_absolute_path.into();
 

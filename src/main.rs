@@ -164,22 +164,12 @@ fn process_markers(
 }
 
 fn main() -> AnyResult<()> {
-    let _logger_result = if cfg!(windows) {
-        SimpleLogger::default()
-            .with_level(LevelFilter::Info)
-            .with_colors(true)
-            .without_timestamps()
-            .init()
-    } else if cfg!(unix) {
-        // Couldn't compile on Pop OS because it couldn't handle the time offset.
-        SimpleLogger::default()
-            .with_level(LevelFilter::Info)
-            .with_colors(true)
-            .without_timestamps()
-            .init()
-    } else {
-        panic!("Unsupported operating system")
-    };
+    let logger_result = SimpleLogger::default()
+        .with_level(LevelFilter::Debug)
+        .with_colors(true)
+        .without_timestamps()
+        .init();
+    dbg!(logger_result);
 
     ctrlc::set_handler(move || {
         std::process::exit({

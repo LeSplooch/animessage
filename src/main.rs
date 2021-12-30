@@ -1,9 +1,9 @@
-use std::{cell::RefCell, fs, io::Read, mem::MaybeUninit, path};
+use std::{cell::RefCell, fs, io::Read, mem::MaybeUninit, path, thread};
 
 use anyhow::bail;
 use envmnt::{exists, get_list};
 use inquire::Confirm;
-use log::info;
+use log::{info, LevelFilter};
 use term_table::{row::Row, Table};
 
 mod parser;
@@ -164,7 +164,22 @@ fn process_markers(
 }
 
 fn main() -> AnyResult<()> {
-    SimpleLogger::new().init().unwrap();
+    let _logger_result = if cfg!(windows) {
+        SimpleLogger::default()
+            .with_level(LevelFilter::Info)
+            .with_colors(true)
+            .without_timestamps()
+            .init()
+    } else if cfg!(unix) {
+        // Couldn't compile on Pop OS because it couldn't handle the time offset.
+        SimpleLogger::default()
+            .with_level(LevelFilter::Info)
+            .with_colors(true)
+            .without_timestamps()
+            .init()
+    } else {
+        panic!("Unsupported operating system")
+    };
 
     ctrlc::set_handler(move || {
         std::process::exit({
@@ -177,7 +192,7 @@ fn main() -> AnyResult<()> {
     // Get cmd args
     let options = Opts::from_args();
     let file = options.file;
-    let tutorial: bool = options.tutorial;
+    let tutorial = options.tutorial;
     let no_exec = options.no_exec;
     let debug = if options.no_exec {
         debug!("Debug mode has been enabled by default because no_exec is enabled.");
@@ -185,8 +200,8 @@ fn main() -> AnyResult<()> {
     } else {
         options.debug
     };
-    let marker: Option<String> = options.marker;
-    let markers_summary: bool = options.summary;
+    let marker = options.marker;
+    let markers_summary = options.summary;
 
     // #[cfg(windows)]
     // {

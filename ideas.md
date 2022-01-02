@@ -7,3 +7,6 @@ Allow to seperately :
 - Stop
 - Set volume / Arg 1 : Volume
 and thus via different functions.
+
+> Documentation
+Auto generate a doc by searching for the consts in parser from line 7. (using Iterator::take_while to walk thru the lines)

@@ -589,7 +589,7 @@ pub(crate) fn display_animessage(
 
                 if debug {
                     debug!(
-                        "Moving the cursor to position {} * {} (columns * rows) ...",
+                        "Moving the cursor to position {} * {} (columns * rows) ... This has no effect in debug mode.",
                         &columns, &rows
                     );
                 }
@@ -670,7 +670,7 @@ pub(crate) fn display_animessage(
             // ESCAPE
             _ if line_trimmed.starts_with(ESCAPE) => {
                 if debug {
-                    debug!("Escaping this line. Functions won't be executed.")
+                    debug!("Escaping this line. Functions won't be executed and the line will be added as is to the print buffer.")
                 }
 
                 let skipped_string = &line_trimmed[ESCAPE.chars().count() + 1..]; // Escaped text is not considered as an arg. Do NOT Args::parse.

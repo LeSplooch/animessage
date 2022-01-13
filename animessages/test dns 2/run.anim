@@ -17,13 +17,15 @@
 
 3:00 AM,
 --[PRINT]-- "0.05"
---[WAIT]-- "0.6"
+--[WAIT]-- "0.9"
 
  the night has fallen,
 --[PRINT]-- "0.05"
---[WAIT]-- "0.6"
+--[WAIT]-- "0.9"
 
  and I'm thinking of my baby...
 --[PRINT_LINE]-- "0.05"
---[WAIT]-- "0.6"
+--[WAIT]-- "0.9"
 
+--[NOTE]-- The next WAIT is for debug purposes
+--[WAIT]-- "5"

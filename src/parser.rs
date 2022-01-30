@@ -33,7 +33,7 @@ pub(crate) const NOTE: &str = "--[NOTE]--"; // Used to write a comment. This has
 pub(crate) const EXIT: &str = "--[EXIT]--"; // Close Animessage prematurely.
 
 #[allow(unreachable_code)]
-pub(crate) fn display_animessage(
+pub fn display_animessage(
     animessage_str: &str,
     relative_paths_ok: bool,
     debug: bool,

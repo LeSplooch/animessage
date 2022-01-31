@@ -1,8 +1,4 @@
-use {
-    // TODO: Importer error!(). Trouver comment manager des modules au sein d'un crate.
-    log::{debug, error, info, warn},
-    std::collections::BTreeMap,
-};
+use super::*;
 
 pub enum Variable {
     String(String),
@@ -19,7 +15,7 @@ impl Variable {
         var_name: &str,
         var_type: &str,
         var_unparsed: &str,
-        vars_cache: Option<&mut BTreeMap<String, Variable>>,
+        vars_cache: Option<&mut HashMap<String, Variable>>,
         debug: bool,
     ) -> Option<Variable> {
         if debug && vars_cache.is_some() {

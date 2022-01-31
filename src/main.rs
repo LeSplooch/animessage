@@ -35,7 +35,7 @@ use {
     std::{
         /* borrow::Cow, */
         /* env, */
-        collections::BTreeMap,
+        collections::{BTreeMap, HashMap},
         fs::{read_to_string, /* self, */ File},
         io::{stdout, BufReader, Write},
         path::{Path, PathBuf},

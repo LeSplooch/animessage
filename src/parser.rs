@@ -43,14 +43,14 @@ pub fn display_animessage(
     let mut current_step = String::with_capacity(1024);
     // let mut expected_steps_n: u64 = 0;
 
-    let mut gotos_cache: BTreeMap<usize, u64> = BTreeMap::new(); // K: goto line / V: goto iters number
+    let mut gotos_cache: HashMap<usize, u64> = HashMap::new(); // K: goto line / V: goto iters number
                                                                  // let mut goto_iters_n: u64 = 0;
-    let mut replaces_cache: BTreeMap<usize, [String; 2]> = BTreeMap::new();
-    let mut vars: BTreeMap<String, Variable> = BTreeMap::new();
+    let mut replaces_cache: HashMap<usize, [String; 2]> = HashMap::new();
+    let mut vars: HashMap<String, Variable> = HashMap::new();
 
     let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
 
-    let mut lines: Vec<String> = animessage_str // IDEA : Change to a BTreeMap<usize, String> if keeping lines number/index in place becomes necessary.
+    let mut lines: Vec<String> = animessage_str // IDEA : Change to a HashMap<usize, String> if keeping lines number/index in place becomes necessary.
         .lines()
         .map(|s| s.to_string())
         .collect();

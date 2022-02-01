@@ -1,7 +1,7 @@
 use super::*;
-use crossterm::{terminal, ExecutableCommand};
-pub(crate) fn clear_terminal() -> anyhow::Result<()> {
-    match stdout().execute(terminal::Clear(ClearType::All)) {
+
+pub(crate) fn clear_terminal(stdout: &Term) -> anyhow::Result<()> {
+    match stdout.clear_screen() {
         Ok(_exec_ref) => Ok(()),
         Err(_err) => {
             anyhow::bail!("Can't clear lines in this terminal. Animessage can't work properly.")
@@ -9,24 +9,24 @@ pub(crate) fn clear_terminal() -> anyhow::Result<()> {
     }
 }
 
-pub(crate) fn save_cursor_position() -> anyhow::Result<()> {
-    match stdout().execute(cursor::SavePosition) {
-        Ok(_exec_ref) => Ok(()),
-        Err(_err) => anyhow::bail!("Can't save the position of the cursor."),
-    }
-}
+// pub(crate) fn save_cursor_position(stdout: &Term) -> anyhow::Result<()> {
+//     match stdout().execute(cursor::SavePosition) {
+//         Ok(_exec_ref) => Ok(()),
+//         Err(_err) => anyhow::bail!("Can't save the position of the cursor."),
+//     }
+// }
 
-pub(crate) fn restore_cursor_position() -> anyhow::Result<()> {
-    match stdout().execute(cursor::RestorePosition) {
-        Ok(_exec_ref) => Ok(()),
-        Err(_err) => anyhow::bail!("Can't restore the position of the cursor."),
-    }
-}
+// pub(crate) fn restore_cursor_position(stdout: &Term) -> anyhow::Result<()> {
+//     match stdout. {
+//         Ok(_exec_ref) => Ok(()),
+//         Err(_err) => anyhow::bail!("Can't restore the position of the cursor."),
+//     }
+// }
 
-pub(crate) fn move_cursor(columns: u16, rows: u16) -> anyhow::Result<()> {
-    match stdout().execute(cursor::MoveTo(columns, rows)) {
+pub(crate) fn move_cursor(stdout: &Term, columns: usize, rows: usize) -> anyhow::Result<()> {
+    match stdout.move_cursor_to(columns, rows){
         Ok(_exec_ref) => {
-            flush_stdout();
+            flush_stdout(stdout);
             Ok(())
         }
         Err(_err) => anyhow::bail!(
@@ -35,8 +35,8 @@ pub(crate) fn move_cursor(columns: u16, rows: u16) -> anyhow::Result<()> {
     }
 }
 
-pub(crate) fn move_to_previous_line(lines_n: u16) -> anyhow::Result<()> {
-    match stdout().execute(cursor::MoveToPreviousLine(lines_n)) {
+pub(crate) fn move_to_previous_line(stdout: &Term, lines_n: usize) -> anyhow::Result<()> {
+    match stdout.move_cursor_up(lines_n) {
         Ok(_exec_ref) => Ok(()),
         Err(_err) => anyhow::bail!(
             "Can't move the cursor in this terminal. Use another terminal such as Alacritty."
@@ -44,8 +44,8 @@ pub(crate) fn move_to_previous_line(lines_n: u16) -> anyhow::Result<()> {
     }
 }
 
-pub(crate) fn flush_stdout() {
-    if let Err(err) = stdout().flush() {
+pub(crate) fn flush_stdout(stdout: &Term) {
+    if let Err(err) = stdout.flush() {
         warn!(
             "PRINT ERROR : Can't flush stdout. Error details below : \n{:#?}",
             err

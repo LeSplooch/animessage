@@ -47,9 +47,10 @@ dependencies = [
 
 [[package]]
 name = "animessage"
-version = "0.28.8"
+version = "0.29.0"
 dependencies = [
  "anyhow",
+ "console",
  "console_engine",
  "crossterm 0.22.1",
  "ctrlc",
@@ -265,7 +266,9 @@ dependencies = [
  "encode_unicode",
  "libc",
  "once_cell",
+ "regex",
  "terminal_size",
+ "unicode-width",
  "winapi",
 ]
 

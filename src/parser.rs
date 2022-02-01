@@ -1,4 +1,3 @@
-use crossterm::ExecutableCommand;
 use inquire::error::InquireError;
 use viuer::terminal_size;
 
@@ -39,6 +38,7 @@ pub fn display_animessage(
     debug: bool,
     no_exec: bool,
     start_index: usize,
+    stdout: &Term
 ) -> AnyResult<()> {
     let mut current_step = String::with_capacity(1024);
     // let mut expected_steps_n: u64 = 0;
@@ -58,11 +58,11 @@ pub fn display_animessage(
 
     let lines_number_count = lines.len().to_string().chars().count();
 
-    if !debug {
-        // clear_terminal()?
-        // move_cursor(0, 0)?;
-        save_cursor_position()?;
-    }
+    // if !debug {
+    //     // clear_terminal()?
+    //     // move_cursor(0, 0)?;
+    //     save_cursor_position()?;
+    // }
 
     let mut line_index: usize = start_index;
     'main_loop: while line_index + 1 <= lines.len() {
@@ -92,7 +92,7 @@ pub fn display_animessage(
                         }
                         if !no_exec {
                             print!("{}", &current_step);
-                            flush_stdout();
+                            flush_stdout(stdout);
                         }
                     } else {
                         if debug {
@@ -102,7 +102,7 @@ pub fn display_animessage(
                             for line_string in current_step.lines() {
                                 for c in line_string.chars() {
                                     print!("{}", c);
-                                    flush_stdout();
+                                    flush_stdout(stdout);
                                     sleep(print_interval);
                                 }
                             }
@@ -128,7 +128,7 @@ pub fn display_animessage(
                         }
                         if !no_exec {
                             println!("{}", &current_step);
-                            flush_stdout();
+                            flush_stdout(stdout);
                         }
                     } else {
                         if debug {
@@ -138,7 +138,7 @@ pub fn display_animessage(
                             for line_string in current_step.lines() {
                                 for c in line_string.chars() {
                                     print!("{}", c);
-                                    flush_stdout();
+                                    flush_stdout(stdout);
                                     sleep(print_interval);
                                 }
                                 println!();
@@ -309,17 +309,17 @@ pub fn display_animessage(
                             let dbg_msg = format!("Keys pressed : {:?}", &keys);
                             let dbg_msg_lines_count = dbg_msg.lines().count();
                             if del_last_line && dbg_msg != last_dbg_msg {
-                                move_to_previous_line(dbg_msg_lines_count as u16)?;
-                                let cols = match terminal::size() {
-                                    Ok((cols, _)) => cols,
-                                    Err(_) => 68,
+                                move_to_previous_line(stdout, dbg_msg_lines_count)?;
+                                let cols = match stdout.size_checked() {
+                                    Some((cols, _)) => cols as usize,
+                                    None => 68,
                                 };
-                                let mut erasing_line = String::with_capacity(cols as usize);
+                                let mut erasing_line = String::with_capacity(cols);
                                 for _ in 0..cols {
                                     erasing_line.push(' ');
                                 }
                                 println!("{}", erasing_line);
-                                move_to_previous_line(dbg_msg_lines_count as u16)?;
+                                move_to_previous_line(stdout, dbg_msg_lines_count)?;
                                 debug!("{}", dbg_msg);
                                 last_dbg_msg = dbg_msg;
                             }
@@ -506,10 +506,7 @@ pub fn display_animessage(
                 let args = Args::parse(line_trimmed, 1)?;
                 let title = args.get(0);
 
-                if let Err(_err) = stdout().execute(terminal::SetTitle(&title)) {
-                    error!("Can't set terminal's title. Please use a terminal that supports title changes, such as Alacritty 0.5 or above.");
-                    return Ok(());
-                }
+                stdout.set_title(&title);
 
                 if debug {
                     debug!("Terminal title set to {:?}", title);
@@ -522,7 +519,7 @@ pub fn display_animessage(
                 if debug {
                     debug!("Clearing terminal. This function has no effect in debug mode.");
                 } else {
-                    clear_terminal()?
+                    clear_terminal(stdout)?
                 }
             }
 
@@ -547,7 +544,7 @@ pub fn display_animessage(
 
                 if debug {
                     let current_terminal_size_string =
-                        if let Ok(current_terminal_size) = terminal::size() {
+                        if let Some(current_terminal_size) = stdout.size_checked() {
                             format!("{:?}", current_terminal_size)
                         } else {
                             "<UNKNOWN>".to_string()
@@ -558,10 +555,10 @@ pub fn display_animessage(
 
                 if !no_exec {
                     if let Err(_err) =
-                        crossterm::execute!(stdout(), terminal::SetSize(columns, rows))
+                        crossterm::execute!(io::stdout(), terminal::SetSize(columns, rows))
                     {
                         error!(
-                            "Can't resize this terminal. Use another terminal such as Alacritty."
+                            "Can't resize this terminal. Use another terminal such as Windows Terminal or Alacritty."
                         );
                         return Ok(());
                     };
@@ -572,17 +569,17 @@ pub fn display_animessage(
             _ if line_trimmed.starts_with(MOVE_CURSOR) => {
                 let args = Args::parse(line_trimmed, 2)?;
 
-                let columns = match args.get(0).parse::<u16>() {
+                let columns = match args.get(0).parse::<usize>() {
                     Ok(cols) => cols,
                     Err(_err) => {
-                        error!("Can't convert arg to an integer between 0 and 65535 included.");
+                        error!("Can't convert arg to an integer of valid size. If you've entered a valid number, try again with a smaller one.");
                         return Ok(());
                     }
                 };
-                let rows = match args.get(1).parse::<u16>() {
+                let rows = match args.get(1).parse::<usize>() {
                     Ok(rows) => rows,
                     Err(_err) => {
-                        error!("Can't convert arg to an integer between 0 and 65535 included.");
+                        error!("Can't convert arg to an integer of valid size. If you've entered a valid number, try again with a smaller one.");
                         return Ok(());
                     }
                 };
@@ -595,16 +592,16 @@ pub fn display_animessage(
                 }
 
                 if !debug {
-                    move_cursor(columns, rows)?;
+                    move_cursor(stdout, columns, rows)?;
                 }
             }
 
             // HIDE_CURSOR
             _ if line_trimmed == HIDE_CURSOR => {
                 if !no_exec {
-                    if let Err(_err) = crossterm::execute!(stdout(), cursor::Hide) {
+                    if let Err(_err) = stdout.hide_cursor() {
                         error!(
-                            "Can't resize this terminal. Use another terminal such as Alacritty."
+                            "Can't resize this terminal. Use another terminal such as Windows Terminal or Alacritty."
                         );
                         return Ok(());
                     }
@@ -620,9 +617,9 @@ pub fn display_animessage(
             // SHOW_CURSOR
             _ if line_trimmed == SHOW_CURSOR => {
                 if !no_exec {
-                    if let Err(_err) = crossterm::execute!(stdout(), cursor::Show) {
+                    if let Err(_err) = stdout.show_cursor() {
                         error!(
-                            "Can't resize this terminal. Use another terminal such as Alacritty."
+                            "Can't resize this terminal. Use another terminal such as Windows Terminal or Alacritty."
                         );
                         return Ok(());
                     }

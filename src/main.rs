@@ -1,6 +1,8 @@
 use std::{cell::RefCell, fs, io::Read, mem::MaybeUninit, path, thread};
 
 use anyhow::bail;
+use console::Term;
+use crossterm::{cursor, terminal};
 use envmnt::{exists, get_list};
 use inquire::Confirm;
 use log::{info, LevelFilter};
@@ -21,11 +23,6 @@ use {
     /* lazy_static::lazy_static, */
     anyhow::Result as AnyResult,
     args::{duration_from_arg, Args},
-    crossterm::{
-        self, /* Command, */
-        /* execute, ExecutableCommand,  */ cursor,
-        terminal::{self, ClearType},
-    },
     device_query::{DeviceQuery, DeviceState, Keycode},
     image::{self /* GenericImageView */},
     log::{debug /*,  info */, error, warn},
@@ -37,7 +34,7 @@ use {
         /* env, */
         collections::{BTreeMap, HashMap},
         fs::{read_to_string, /* self, */ File},
-        io::{stdout, BufReader, Write},
+        io::{self, BufReader, Write},
         path::{Path, PathBuf},
         str::FromStr,
         thread::sleep,
@@ -68,7 +65,7 @@ fn check_relative_path_ok(path: &Path, relative_paths_ok: bool) {
     }
 }
 
-fn print_title() {
+fn print_title(stdout: &Term) {
     println!(
         "
 
@@ -77,12 +74,9 @@ fn print_title() {
     ╚═══════════════════════════════════════════════════════════════════════╝
     "
     );
-    flush_stdout();
+    flush_stdout(stdout);
 
-    crossterm::execute!(stdout(), cursor::Show).unwrap_or_else(|_| {
-        error!("Can't show the cursor on this terminal with its current settings.");
-        std::process::exit(0)
-    });
+    let _ = stdout.show_cursor();
 }
 
 enum MarkerMode {
@@ -107,6 +101,7 @@ fn process_markers(
     marker: &str,
     debug: bool,
     mode: MarkerMode,
+    stdout: &Term
 ) -> AnyResult<usize> {
     if debug {
         match mode {
@@ -156,7 +151,7 @@ fn process_markers(
 
     if let MarkerMode::Find = mode {
         error!("No marker corresponding to {:?}. Exiting...", marker);
-        print_title();
+        print_title(&stdout);
         std::process::exit(0);
     }
 
@@ -170,9 +165,12 @@ fn main() -> AnyResult<()> {
         .without_timestamps()
         .init();
 
+    let stdout = console::Term::stdout();
+
+    let stdout_clone = stdout.clone();
     ctrlc::set_handler(move || {
         std::process::exit({
-            print_title();
+            print_title(&stdout_clone);
             warn!("Animessage terminated by user. (Ctrl + C)");
             0
         });
@@ -191,6 +189,7 @@ fn main() -> AnyResult<()> {
     };
     let marker = options.marker;
     let markers_summary = options.summary;
+
 
     // #[cfg(windows)]
     // {
@@ -228,20 +227,20 @@ fn main() -> AnyResult<()> {
             Ok(buf) => {
                 if markers_summary {
                     let marker_mode = MarkerMode::Summary;
-                    process_markers(&buf, "", debug, marker_mode)?;
+                    process_markers(&buf, "", debug, marker_mode, &stdout)?;
                     return Ok(());
                 } else {
                     let marker_mode = MarkerMode::Find;
                     let start_index = if let Some(marker) = marker {
-                        process_markers(&buf, &marker, debug, marker_mode)?
+                        process_markers(&buf, &marker, debug, marker_mode, &stdout)?
                     } else {
                         0
                     };
 
-                    display_animessage(&buf, true, debug, no_exec, start_index)?;
+                    display_animessage(&buf, true, debug, no_exec, start_index, &stdout)?;
                 }
 
-                print_title();
+                print_title(&stdout);
                 return Ok(());
             }
             Err(err) => {
@@ -252,17 +251,17 @@ fn main() -> AnyResult<()> {
     if tutorial || file.is_none() {
         if markers_summary {
             let marker_mode = MarkerMode::Summary;
-            process_markers(TUTORIAL, "", debug, marker_mode)?;
+            process_markers(TUTORIAL, "", debug, marker_mode, &stdout)?;
             return Ok(());
         } else {
             let marker_mode = MarkerMode::Find;
             let start_index = if marker.is_some() {
-                process_markers(TUTORIAL, &marker.unwrap(), debug, marker_mode)?
+                process_markers(TUTORIAL, &marker.unwrap(), debug, marker_mode, &stdout)?
             } else {
                 0
             };
 
-            display_animessage(TUTORIAL, false, debug, no_exec, start_index)?;
+            display_animessage(TUTORIAL, false, debug, no_exec, start_index, &stdout)?;
         }
     } else {
         let file: PathBuf = file.unwrap();
@@ -270,12 +269,12 @@ fn main() -> AnyResult<()> {
 
         if markers_summary {
             let marker_mode = MarkerMode::Summary;
-            process_markers(&animessage_string, "", debug, marker_mode)?;
+            process_markers(&animessage_string, "", debug, marker_mode, &stdout)?;
             return Ok(());
         }
 
         let start_index = if let Some(marker) = marker {
-            process_markers(&animessage_string, &marker, debug, MarkerMode::Find)?
+            process_markers(&animessage_string, &marker, debug, MarkerMode::Find, &stdout)?
         } else {
             0
         };
@@ -327,13 +326,14 @@ fn main() -> AnyResult<()> {
             debug,
             no_exec,
             start_index,
+            &stdout
         )?;
     }
 
     if debug {
         debug!("--- END --- ");
     }
-    print_title();
+    print_title(&stdout);
 
     // if let Ok((columns, rows)) = terminal::size() {
     //     move_cursor(columns, rows);
@@ -349,10 +349,9 @@ mod tests {
 
     #[test]
     fn syntax_test() {
-        let res = display_animessage(TUTORIAL, true, true, true, 0);
-        crossterm::execute!(stdout(), cursor::Show).unwrap_or_else(|_| {
-            error!("Can't show the cursor. Use another terminal such as Alacritty.");
-        });
+        let stdout = Term::stdout();
+        let res = display_animessage(TUTORIAL, true, true, true, 0, &stdout);
+        stdout.show_cursor();
         assert!(res.is_ok());
     }
 }

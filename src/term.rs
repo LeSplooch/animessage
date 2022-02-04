@@ -26,7 +26,7 @@ pub(crate) fn clear_terminal(stdout: &Term) -> anyhow::Result<()> {
 pub(crate) fn move_cursor(stdout: &Term, columns: usize, rows: usize) -> anyhow::Result<()> {
     match stdout.move_cursor_to(columns, rows){
         Ok(_exec_ref) => {
-            flush_stdout(stdout);
+            flush_stdout();
             Ok(())
         }
         Err(_err) => anyhow::bail!(
@@ -44,8 +44,8 @@ pub(crate) fn move_to_previous_line(stdout: &Term, lines_n: usize) -> anyhow::Re
     }
 }
 
-pub(crate) fn flush_stdout(stdout: &Term) {
-    if let Err(err) = stdout.flush() {
+pub(crate) fn flush_stdout() {
+    if let Err(err) = io::stdout().flush() {
         warn!(
             "PRINT ERROR : Can't flush stdout. Error details below : \n{:#?}",
             err

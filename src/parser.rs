@@ -92,7 +92,7 @@ pub fn display_animessage(
                         }
                         if !no_exec {
                             print!("{}", &current_step);
-                            flush_stdout(stdout);
+                            flush_stdout();
                         }
                     } else {
                         if debug {
@@ -102,7 +102,7 @@ pub fn display_animessage(
                             for line_string in current_step.lines() {
                                 for c in line_string.chars() {
                                     print!("{}", c);
-                                    flush_stdout(stdout);
+                                    flush_stdout();
                                     sleep(print_interval);
                                 }
                             }
@@ -128,7 +128,7 @@ pub fn display_animessage(
                         }
                         if !no_exec {
                             println!("{}", &current_step);
-                            flush_stdout(stdout);
+                            flush_stdout();
                         }
                     } else {
                         if debug {
@@ -138,7 +138,7 @@ pub fn display_animessage(
                             for line_string in current_step.lines() {
                                 for c in line_string.chars() {
                                     print!("{}", c);
-                                    flush_stdout(stdout);
+                                    flush_stdout();
                                     sleep(print_interval);
                                 }
                                 println!();

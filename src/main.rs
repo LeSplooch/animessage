@@ -74,7 +74,7 @@ fn print_title(stdout: &Term) {
     ╚═══════════════════════════════════════════════════════════════════════╝
     "
     );
-    flush_stdout(stdout);
+    flush_stdout();
 
     let _ = stdout.show_cursor();
 }

@@ -361,7 +361,7 @@ pub fn display_animessage(
                     return Ok(());
                 }
 
-                if !url.is_empty() {
+                if !url.is_empty() && !no_exec {
                     println!();
                     let prompt_msg = format!(
                         "Open the following URL with your default internet browser ? {}",

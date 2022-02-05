@@ -24,7 +24,7 @@ pub(crate) fn clear_terminal(stdout: &Term) -> anyhow::Result<()> {
 // }
 
 pub(crate) fn move_cursor(stdout: &Term, columns: usize, rows: usize) -> anyhow::Result<()> {
-    match stdout.move_cursor_to(columns, rows){
+    match stdout.move_cursor_to(columns, rows) {
         Ok(_exec_ref) => {
             flush_stdout();
             Ok(())

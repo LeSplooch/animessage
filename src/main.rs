@@ -101,7 +101,7 @@ fn process_markers(
     marker: &str,
     debug: bool,
     mode: MarkerMode,
-    stdout: &Term
+    stdout: &Term,
 ) -> AnyResult<usize> {
     if debug {
         match mode {
@@ -190,7 +190,6 @@ fn main() -> AnyResult<()> {
     let marker = options.marker;
     let markers_summary = options.summary;
 
-
     // #[cfg(windows)]
     // {
     //     // Put Animessage in the Path
@@ -274,18 +273,19 @@ fn main() -> AnyResult<()> {
         }
 
         let start_index = if let Some(marker) = marker {
-            process_markers(&animessage_string, &marker, debug, MarkerMode::Find, &stdout)?
+            process_markers(
+                &animessage_string,
+                &marker,
+                debug,
+                MarkerMode::Find,
+                &stdout,
+            )?
         } else {
             0
         };
 
-        let animessage_absolute_path = file
-            .as_path()
-            .canonicalize()?;
-        let mut animessage_absolute_path = animessage_absolute_path
-            .to_str()
-            .unwrap()
-            .to_string();
+        let animessage_absolute_path = file.as_path().canonicalize()?;
+        let mut animessage_absolute_path = animessage_absolute_path.to_str().unwrap().to_string();
         if cfg!(windows) {
             animessage_absolute_path = animessage_absolute_path.replace("\\\\?\\", "");
         }
@@ -326,7 +326,7 @@ fn main() -> AnyResult<()> {
             debug,
             no_exec,
             start_index,
-            &stdout
+            &stdout,
         )?;
     }
 

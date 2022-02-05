@@ -38,13 +38,13 @@ pub fn display_animessage(
     debug: bool,
     no_exec: bool,
     start_index: usize,
-    stdout: &Term
+    stdout: &Term,
 ) -> AnyResult<()> {
     let mut current_step = String::with_capacity(1024);
     // let mut expected_steps_n: u64 = 0;
 
     let mut gotos_cache: HashMap<usize, u64> = HashMap::new(); // K: goto line / V: goto iters number
-                                                                 // let mut goto_iters_n: u64 = 0;
+                                                               // let mut goto_iters_n: u64 = 0;
     let mut replaces_cache: HashMap<usize, [String; 2]> = HashMap::new();
     let mut vars: HashMap<String, Variable> = HashMap::new();
 
@@ -361,47 +361,49 @@ pub fn display_animessage(
                     return Ok(());
                 }
 
-                if !url.is_empty() && !no_exec {
-                    println!();
-                    let prompt_msg = format!(
-                        "Open the following URL with your default internet browser ? {}",
-                        url
-                    );
-                    let yes = Confirm::new(&prompt_msg)
-                        .with_help_message(
-                            "Type \"y\" to accept or \"n\" to refuse, and then press \"Enter\".",
-                        )
-                        .prompt();
-                    match yes {
-                        Ok(true) => {
-                            if !no_exec {
-                                let webbrowser_result = webbrowser::open(&url);
-                                if debug {
-                                    match webbrowser_result {
-                                        Ok(_) => debug!("Successfully opened URL {:?}.", &url),
-                                        Err(err) => warn!(
-                                            "URL has not been opened {:?}. Error details :\n{:#?}",
-                                            &url, &err
-                                        ),
+                if !no_exec {
+                    if !url.is_empty() {
+                        println!();
+                        let prompt_msg = format!(
+                            "Open the following URL with your default internet browser ? {}",
+                            url
+                        );
+                        let yes = Confirm::new(&prompt_msg)
+                            .with_help_message(
+                                "Type \"y\" to accept or \"n\" to refuse, and then press \"Enter\".",
+                            )
+                            .prompt();
+                        match yes {
+                            Ok(true) => {
+                                if !no_exec {
+                                    let webbrowser_result = webbrowser::open(&url);
+                                    if debug {
+                                        match webbrowser_result {
+                                            Ok(_) => debug!("Successfully opened URL {:?}.", &url),
+                                            Err(err) => warn!(
+                                                "URL has not been opened {:?}. Error details :\n{:#?}",
+                                                &url, &err
+                                            ),
+                                        }
                                     }
                                 }
                             }
-                        }
-                        Ok(false) => {
-                            if debug {
-                                debug!("Refused opening URL {:?}.", &url);
+                            Ok(false) => {
+                                if debug {
+                                    debug!("Refused opening URL {:?}.", &url);
+                                }
                             }
-                        }
-                        Err(InquireError::OperationCanceled) => {
-                            if debug {
-                                debug!("Ignored opening URL {:?}.", &url);
+                            Err(InquireError::OperationCanceled) => {
+                                if debug {
+                                    debug!("Ignored opening URL {:?}.", &url);
+                                }
                             }
+                            Err(_) => (),
                         }
-                        Err(_) => (),
+                    } else {
+                        error!("URL is empty. Please enter an URL as the 1st argument.");
+                        return Ok(());
                     }
-                } else {
-                    error!("URL is empty. Please enter an URL as the 1st argument.");
-                    return Ok(());
                 }
             }
 

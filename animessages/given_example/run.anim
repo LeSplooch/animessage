@@ -25,7 +25,7 @@ Animation starting in :
 --[WAIT]-- "0.996"
 
 --[NOTE]-- 0.996s because each character will take about 0.001s to print out to the console (printing in itself adds some overhead, hence the "about")
-
+--[NOTE]-- and I wanted each second to take 2 seconds to be printed. (Got me?)
 
 --[HIDE_CURSOR]--
 --[MOVE_CURSOR]-- "0" "5"
@@ -241,9 +241,9 @@ Animation starting in :
 
 --[CLEAR]--
 
-To learn more about Animessage, rename the "run.anim" file to something else
-and then relaunch Animessage, or launch animessage in the console with the
-following command : animessage -t
+To learn more about Animessage, rename the "run.anim" file to something else and 
+then relaunch Animessage, or launch animessage in the console with the command below : 
+C:\path\to\animessage.exe -t
 --[PRINT_LINE]-- "0.08"
 --[WAIT]-- "2"
 --[EMPTY]--

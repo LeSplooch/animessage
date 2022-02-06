@@ -311,7 +311,7 @@ pub fn display_animessage(
                             if del_last_line && dbg_msg != last_dbg_msg {
                                 move_to_previous_line(stdout, dbg_msg_lines_count)?;
                                 let cols = match stdout.size_checked() {
-                                    Some((cols, _)) => cols as usize,
+                                    Some((_rows, cols)) => cols as usize,
                                     None => 68,
                                 };
                                 let mut erasing_line = String::with_capacity(cols);

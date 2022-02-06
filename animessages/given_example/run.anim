@@ -242,11 +242,14 @@ Animation starting in :
 --[CLEAR]--
 
 To learn more about Animessage, rename the "run.anim" file to something else and 
-then relaunch Animessage, or launch animessage in the console with the command below : 
+then relaunch Animessage, or launch Animessage in the console with either of the 
+commands below : 
+C:\path\to\animessage.exe --tutorial
+or
 C:\path\to\animessage.exe -t
+--[EMPTY]--
 --[PRINT_LINE]-- "0.08"
 --[WAIT]-- "2"
---[EMPTY]--
 
 Like Animessage ? 
 --[PRINT]-- "0.05"

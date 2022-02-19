@@ -41,3 +41,5 @@ bench = false
 
 [profile.release]
 lto = true
+overflow-checks = true
+

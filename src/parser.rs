@@ -116,9 +116,7 @@ pub fn display_animessage(
                     debug!("Current print buffer has been cleared.");
                 }
             }
-        } 
-        
-        else if line_trimmed.starts_with(PRINT_LINE) {
+        } else if line_trimmed.starts_with(PRINT_LINE) {
             let args = Args::parse(line_trimmed, 1)?;
             let print_interval = duration_from_arg(args.get(0))?; // We have verified that the number of args is correct so we can index as we please.
 
@@ -155,9 +153,7 @@ pub fn display_animessage(
                     debug!("Current print buffer has been cleared.");
                 }
             }
-        } 
-        
-        else if line_trimmed.starts_with(VAR) {
+        } else if line_trimmed.starts_with(VAR) {
             // TODO: Changer la fonction pour aussi prendre en charge le mode GET.
             error!("UNSTABLE FUNCTION. Do not use this function.");
             return Ok(());
@@ -180,9 +176,7 @@ pub fn display_animessage(
             if !no_exec {
                 Variable::new(var_name, var_type, &var_unparsed, Some(&mut vars), debug);
             }
-        } 
-        
-        else if line_trimmed.starts_with(GOTO) {
+        } else if line_trimmed.starts_with(GOTO) {
             let args = Args::parse(line_trimmed, 1)?;
             let goto_line_number: usize = match args.get(0).parse::<usize>() {
                 Ok(gln) => gln,
@@ -192,24 +186,22 @@ pub fn display_animessage(
                 }
             };
 
-            if !gotos_cache.contains_key(&line_number) {
-                if debug {
-                    debug!("Going to line {}", &goto_line_number);
-                }
-
-                line_index = goto_line_number - 2; // - 2 because we increment it by 1 afterwards and line_number == line_index + 1.
-                gotos_cache.insert(line_number, 1); // we don't care about the value, it's not processed yet
-            } else {
+            if gotos_cache.contains_key(&line_number) {
                 if debug {
                     debug!(
                         "Not going to line {} : this GOTO function has already been executed.",
                         &goto_line_number
                     )
                 }
+            } else {
+                if debug {
+                    debug!("Going to line {}", &goto_line_number);
+                }
+
+                line_index = goto_line_number - 2; // - 2 because we increment it by 1 afterwards and line_number == line_index + 1.
+                gotos_cache.insert(line_number, 1); // we don't care about the value, it's not processed yet
             }
-        } 
-        
-        else if line_trimmed.starts_with(WAIT) {
+        } else if line_trimmed.starts_with(WAIT) {
             let args = Args::parse(line_trimmed, 1)?;
             let wait_time_str = args.get(0);
 
@@ -222,9 +214,7 @@ pub fn display_animessage(
             if !no_exec {
                 sleep(duration);
             }
-        } 
-        
-        else if line_trimmed.starts_with(REPLACE) {
+        } else if line_trimmed.starts_with(REPLACE) {
             let args = Args::parse(line_trimmed, 3)?;
             let line_replace_number = match args.get(0).parse::<usize>() {
                 Ok(lrn) => lrn,
@@ -255,9 +245,7 @@ pub fn display_animessage(
                     debug!("Not replacing text at line {:?} : text has already been replaced with the same arguments.", &line_replace_number);
                 }
             }
-        } 
-        
-        else if line_trimmed.starts_with(DEL_LINE) {
+        } else if line_trimmed.starts_with(DEL_LINE) {
             let args = Args::parse(line_trimmed, 1)?;
             let del_line_number_str = args.get(0);
             let mut del_line_index = match del_line_number_str.parse::<usize>() {
@@ -274,9 +262,7 @@ pub fn display_animessage(
             if debug {
                 debug!("Deleted line {}", del_line_number_str)
             }
-        } 
-        
-        else if line_trimmed.starts_with(WAIT_FOR_INPUT) {
+        } else if line_trimmed.starts_with(WAIT_FOR_INPUT) {
             let args = Args::parse(line_trimmed, 1)?;
             let mut expected_key = args.get(0).to_string();
 
@@ -335,7 +321,7 @@ pub fn display_animessage(
                             break 'key_loop;
                         }
                     }
-                    sleep(Duration::from_millis(30));
+                    sleep(Duration::from_millis(10));
                 }
                 if debug {
                     debug!(
@@ -344,9 +330,7 @@ pub fn display_animessage(
                     );
                 }
             }
-        } 
-        
-        else if line_trimmed.starts_with(OPEN_URL) {
+        } else if line_trimmed.starts_with(OPEN_URL) {
             let args = Args::parse(line_trimmed, 1)?;
             let url = args.get(0);
 
@@ -372,16 +356,14 @@ pub fn display_animessage(
                         .prompt();
                     match yes {
                         Ok(true) => {
-                            if !no_exec {
-                                let webbrowser_result = webbrowser::open(&url);
-                                if debug {
-                                    match webbrowser_result {
-                                        Ok(_) => debug!("Successfully opened URL {:?}.", &url),
-                                        Err(err) => warn!(
-                                            "URL has not been opened {:?}. Error details :\n{:#?}",
-                                            &url, &err
-                                        ),
-                                    }
+                            let webbrowser_result = webbrowser::open(&url);
+                            if debug {
+                                match webbrowser_result {
+                                    Ok(()) => debug!("Successfully opened URL {:?}.", &url),
+                                    Err(err) => warn!(
+                                        "URL has not been opened {:?}. Error details :\n{:#?}",
+                                        &url, &err
+                                    ),
                                 }
                             }
                         }
@@ -402,9 +384,7 @@ pub fn display_animessage(
                     return Ok(());
                 }
             }
-        } 
-        
-        else if line_trimmed.starts_with(AUDIO) {
+        } else if line_trimmed.starts_with(AUDIO) {
             let args = Args::parse(line_trimmed, 1)?;
             let audio_path: PathBuf = args.get(0).into();
 
@@ -450,9 +430,7 @@ pub fn display_animessage(
                 error!("ARG ERROR : Please specify a path as 1st argument of --[AUDIO]-- :\n--[AUDIO]-- path/to/file.mp3");
                 return Ok(());
             }
-        } 
-        
-        else if line_trimmed.starts_with(IMAGE) {
+        } else if line_trimmed.starts_with(IMAGE) {
             let args = Args::parse(line_trimmed, 1)?;
             let image_path: PathBuf = args.get(0).into();
 
@@ -495,9 +473,7 @@ pub fn display_animessage(
                 error!("ARG ERROR : Please specify a path as 1st argument of --[ASCII_IMAGE]-- :\n--[ASCII_IMAGE]-- path/to/file.jpg");
                 return Ok(());
             }
-        } 
-        
-        else if line_trimmed.starts_with(TITLE) {
+        } else if line_trimmed.starts_with(TITLE) {
             let args = Args::parse(line_trimmed, 1)?;
             let title = args.get(0);
 
@@ -506,18 +482,14 @@ pub fn display_animessage(
             if debug {
                 debug!("Terminal title set to {:?}", title);
             }
-        } 
-        
-        else if line_trimmed == CLEAR {
+        } else if line_trimmed == CLEAR {
             let _ = Args::parse(line_trimmed, 0);
             if debug {
                 debug!("Clearing terminal. This function has no effect in debug mode.");
             } else {
                 clear_terminal(stdout)?
             }
-        } 
-        
-        else if line_trimmed.starts_with(RESIZE) {
+        } else if line_trimmed.starts_with(RESIZE) {
             let args = Args::parse(line_trimmed, 2)?;
 
             let columns = match args.get(0).parse::<u16>() {
@@ -551,14 +523,12 @@ pub fn display_animessage(
                     crossterm::execute!(io::stdout(), terminal::SetSize(columns, rows))
                 {
                     error!(
-                            "Can't resize this terminal. Use another terminal such as Windows Terminal or Alacritty."
-                        );
+                        "Can't resize this terminal. Use another terminal such as Windows Terminal or Alacritty."
+                    );
                     return Ok(());
                 };
             }
-        } 
-        
-        else if line_trimmed.starts_with(MOVE_CURSOR) {
+        } else if line_trimmed.starts_with(MOVE_CURSOR) {
             let args = Args::parse(line_trimmed, 2)?;
 
             let columns = match args.get(0).parse::<usize>() {
@@ -586,9 +556,7 @@ pub fn display_animessage(
             if !debug {
                 move_cursor(stdout, columns, rows)?;
             }
-        } 
-        
-        else if line_trimmed == HIDE_CURSOR {
+        } else if line_trimmed == HIDE_CURSOR {
             if !no_exec {
                 if let Err(_err) = stdout.hide_cursor() {
                     error!(
@@ -601,9 +569,7 @@ pub fn display_animessage(
             if debug {
                 debug!("The cursor has been hidden. This function has no effect in debug mode.");
             }
-        } 
-        
-        else if line_trimmed == SHOW_CURSOR {
+        } else if line_trimmed == SHOW_CURSOR {
             if !no_exec {
                 if let Err(_err) = stdout.show_cursor() {
                     error!(
@@ -616,9 +582,7 @@ pub fn display_animessage(
             if debug {
                 debug!("The cursor is now shown. This function has no effect in debug mode.");
             }
-        } 
-        
-        else if line_trimmed.starts_with(INCLUDE) {
+        } else if line_trimmed.starts_with(INCLUDE) {
             let args = Args::parse(line_trimmed, 1)?;
             let s_path: PathBuf = args.get(0).into();
 
@@ -649,9 +613,7 @@ pub fn display_animessage(
                 error!("ARG ERROR : Please specify a path as 1st argument of --[INCLUDE]-- :\n--[INCLUDE]-- path/to/file.txt");
                 return Ok(());
             }
-        } 
-        
-        else if line_trimmed.starts_with(ESCAPE) {
+        } else if line_trimmed.starts_with(ESCAPE) {
             if debug {
                 debug!("Escaping this line. Functions won't be executed and the line will be added as is to the print buffer.")
             }
@@ -659,24 +621,16 @@ pub fn display_animessage(
             let skipped_string = &line_trimmed[ESCAPE.chars().count() + 1..]; // Escaped text is not considered as an arg. Do NOT Args::parse.
             let escaped_string = format!("{}{}", skipped_string, "\n");
             current_step.push_str(&escaped_string);
-        } 
-        
-        else if line_trimmed == EMPTY {
+        } else if line_trimmed == EMPTY {
             current_step.push_str("\n")
-        } 
-        
-        else if line_trimmed.is_empty()
+        } else if line_trimmed.is_empty()
             || line_trimmed.starts_with(MARKER)
             || line_trimmed.starts_with(NOTE)
         {
             ()
-        } 
-        
-        else if line_trimmed == EXIT {
+        } else if line_trimmed == EXIT {
             return Ok(());
-        } 
-        
-        else {
+        } else {
             let line = format!("{}\n", line);
             current_step.push_str(&line);
         }
